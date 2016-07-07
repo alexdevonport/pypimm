@@ -9,7 +9,6 @@ class ProgBar():
         self.n = 0
         self.w = w
         self.update(0)
-        return None
 
     def set_msg(self, newmsg):
         self.msg = newmsg
@@ -49,12 +48,3 @@ class ProgBar():
         print('\n')  # Start new progress bar on next line
         self.update(0)
 
-
-#pb = ProgBar('Doing thang', 10, 40)
-#k = 0
-#while (True):
-#    for i in range(10):
-#        time.sleep(0.25)
-#        pb.update(1)
-#    k = k + 1
-#    pb.restart('Doing thang ' + str(k))
