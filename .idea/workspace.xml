@@ -5,12 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8330f7bf-ea91-42c0-8d91-1ecac6f9455b" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/bandlimit_test.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/classtest.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/dsintest.py" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ProgBar.py" afterPath="$PROJECT_DIR$/ProgBar.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/vcs.xml" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/PyPIMM.py" afterPath="$PROJECT_DIR$/PyPIMM.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="PyPIMM.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -51,11 +47,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="robust_fit.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="robust_fit.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/robust_fit.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.26107594">
-              <caret line="16" column="0" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="12" column="0" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -105,6 +101,16 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="PyPIMM.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/PyPIMM.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.11867089">
+              <caret line="14" column="26" selection-start-line="14" selection-start-column="26" selection-end-line="14" selection-end-column="26" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
     </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
@@ -147,7 +153,6 @@
         <option value="$PROJECT_DIR$/pimm_preprocess_data.py" />
         <option value="$PROJECT_DIR$/report_template.tex" />
         <option value="$PROJECT_DIR$/pimm_generate_report.py" />
-        <option value="$PROJECT_DIR$/PyPIMM.py" />
         <option value="$PROJECT_DIR$/pimm_calculate_frequency.py" />
         <option value="$PROJECT_DIR$/pimm_characterize_fits.py" />
         <option value="$PROJECT_DIR$/landlif.py" />
@@ -155,9 +160,10 @@
         <option value="$PROJECT_DIR$/shotgun_lsq.py" />
         <option value="$PROJECT_DIR$/pypimmconfig.txt" />
         <option value="$PROJECT_DIR$/pimm_fit_data.py" />
-        <option value="$PROJECT_DIR$/robust_fit.py" />
         <option value="$PROJECT_DIR$/ProgBar.py" />
         <option value="$PROJECT_DIR$/README.md" />
+        <option value="$PROJECT_DIR$/robust_fit.py" />
+        <option value="$PROJECT_DIR$/PyPIMM.py" />
       </list>
     </option>
   </component>
@@ -864,13 +870,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/PyPIMM.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="40" column="0" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/report_template.tex">
       <provider editor-type-id="LaTeXFileEditor">
         <state />
@@ -970,8 +969,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/robust_fit.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.26107594">
-          <caret line="16" column="0" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="12" column="0" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PyPIMM.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.11867089">
+          <caret line="14" column="26" selection-start-line="14" selection-start-column="26" selection-end-line="14" selection-end-column="26" />
           <folding />
         </state>
       </provider>
