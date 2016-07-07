@@ -1,0 +1,13 @@
+initial data skip=0.4
+data fit length=5.0
+hk field fit thresh=20
+bandlimit=4
+use global max=1
+
+frequency sweep start=0.1
+frequency sweep stop=3.75
+frequency sweep steps=100
+
+damping sweep start=0.1
+damping sweep stop=1.0
+damping sweep steps=100
