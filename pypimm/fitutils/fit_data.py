@@ -1,17 +1,18 @@
 __author__ = 'alex'
 
-from PimmAnalysis import PimmAnalysis
-from ProgBar import ProgBar
-import numpy as np
 from math import pi
 import logging
-from pimm_calculate_frequency import pimm_calculate_frequency
-from pimm_calculate_damping import pimm_calculate_damping
-from pimm_preprocess_data import pimm_preprocess_data
-from pimm_error_analysis import pimm_error_analysis
-from shotgun_lsq import shotgun_lsq
+
+import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
+
+from ProgBar import ProgBar
+from pypimm.fitutils import pimm_calculate_damping, pimm_calculate_frequency
+from pimm_preprocess_data import pimm_preprocess_data
+from pypimm import pimm_error_analysis
+from fitutils.shotgun_lsq import shotgun_lsq
+
 rcParams.update({'figure.autolayout': True})
 plt.style.use(['seaborn-paper'])
 

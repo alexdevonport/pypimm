@@ -1,10 +1,10 @@
 __author__ = 'alex'
-import scipy.optimize
-import numpy as np
 from math import isnan
 import logging
-import time
-from fmin_simplex import model_fit_mestimate, ml_lorentz
+
+import scipy.optimize
+import numpy as np
+
 
 def shotgun_lsq(x, y, fun, p0, spread, sigma=1, maxiter = 1000):
     mse = 1

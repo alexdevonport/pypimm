@@ -1,9 +1,9 @@
 import math
-import sys
-import os
+
 import numpy as np
-from get_config_value import get_config_value
-from bandlimit import bandlimit
+
+from pypimm.fitutils import bandlimit
+
 __author__ = 'alex'
 
 def pimm_preprocess_data(timebase, signal, configs):

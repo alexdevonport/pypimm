@@ -1,10 +1,11 @@
 import re
-import matplotlib.pyplot as plt
-import numpy as np
-import scipy as sp
-from shotgun_lsq import shotgun_lsq
 from math import pi
 import os
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+from pypimm.fitutils import shotgun_lsq
 
 __author__ = 'alex'
 

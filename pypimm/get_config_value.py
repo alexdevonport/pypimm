@@ -1,5 +1,4 @@
 import re
-from PimmAnalysis import PimmAnalysis
 
 __author__ = 'alex'
 

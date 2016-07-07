@@ -1,5 +1,4 @@
 import csv
-from PimmAnalysis import PimmAnalysis
 import re
 from collections import OrderedDict
 

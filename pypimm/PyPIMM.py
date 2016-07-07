@@ -1,18 +1,18 @@
 #!/usr/bin/env python
 
-import os, sys
-from PimmAnalysis import PimmAnalysis
+import os
+import sys
+import logging
+
+from pypimm import PimmAnalysis
 from pimm_load_data import pimm_load_data
 from pimm_fit_data import pimm_fit_data
 from pimm_characterize_fits import pimm_characterize_fits
 from pimm_generate_report import pimm_generate_report
 from get_config_value import get_config_value
-import re
 
-import logging
 logging.basicConfig(level=logging.DEBUG)
 logging.disable(logging.DEBUG)
-# HEY GUYS I MADE A CHANGE
 timebase_key = 'time(s)'
 
 # initialize data structures for signal data, signal fits, and characterization

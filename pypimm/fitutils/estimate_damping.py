@@ -1,8 +1,6 @@
 __author__ = 'alex'
 from scipy.optimize import curve_fit
-from bandlimit import bandlimit
 import numpy as np
-from numpy.fft import fft, ifft
 import matplotlib.pyplot as plt
 
 
