@@ -6,7 +6,7 @@ from pypimm.fitutils import bandlimit
 
 __author__ = 'alex'
 
-def pimm_preprocess_data(timebase, signal, configs):
+def preprocess(timebase, signal, configs):
     """
 
     :param timebase:

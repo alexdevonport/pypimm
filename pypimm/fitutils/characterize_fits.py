@@ -11,7 +11,7 @@ __author__ = 'alex'
 
 
 #def pimm_characterize_fits(fits, name=None):
-def pimm_characterize_fits(analysis):
+def characterize_fits(analysis):
     '''
 
     :param fits:

@@ -6,7 +6,7 @@ import os
 __author__ = 'alex'
 
 
-def pimm_calculate_frequency(timebase, signal, resolution=0.01, name=None):
+def estimate_frequency(timebase, signal, resolution=0.01, name=None):
     """
 
     :param resolution:

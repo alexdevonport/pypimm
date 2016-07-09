@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def pimm_calculate_damping(timebase, signal, fguess, name=None):
+def estimate_damping(timebase, signal, fguess, name=None):
     """
 
     :param timebase:

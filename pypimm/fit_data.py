@@ -7,20 +7,21 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
 
-from ProgBar import ProgBar
-from pypimm.fitutils import pimm_calculate_damping, pimm_calculate_frequency
-from pimm_preprocess_data import pimm_preprocess_data
-from pypimm import pimm_error_analysis
-from fitutils.shotgun_lsq import shotgun_lsq
-
+from .ProgBar import ProgBar
+import pypimm.fitutils as fit
 rcParams.update({'figure.autolayout': True})
 plt.style.use(['seaborn-paper'])
 
 
-def pimm_fit_data(analysis):
+def fit_data(analysis):
     '''
-    The univariate signal given by (timebase, signal) is fit to a damped sine of the form
-    y(t) = A*exp(-g*(t-t0)) * cos(2*pi*f*(t-t0)) * u(t-t0). t0 is found first, and is taken as
+    The univariate signal given by (timebase, signal) is fit to a
+    damped sine of the form
+
+    .. math::
+        y(t) = A \exp(-g1*(t-t_0)) * cos(2 \pi f (t-t_0)) + B exp(-g_2 (t-t)0)).
+
+    t0 is found first, and is taken as
     the time of the first zero-crossing after a user-specified amount of data to skip. A is
     found next, by shifting the last value of the signal to zero and taking the magnitude of
     the first data point. The frequency and damping are a little trickier to find, and are
@@ -56,16 +57,16 @@ def pimm_fit_data(analysis):
     for name, signal in signals.items():
         r[name] = {}
         timebase = analysis.get_timebase()
-        timebase, signal = pimm_preprocess_data(timebase, signal, configs)
+        timebase, signal = fit.preprocess(timebase, signal, configs)
         # make amplitude estimate
         amplitude_est = np.max(signal[:25])
         # make frequency estimate
-        frequency_est = pimm_calculate_frequency(timebase, signal, name=name)
+        frequency_est = fit.estimate_frequency(timebase, signal, name=name)
         # make damping estimate
-        damping_est = pimm_calculate_damping(timebase, signal, frequency_est, name=name)
+        damping_est = fit.estimate_damping(timebase, signal, frequency_est, name=name)
         # With those estimates ready, we can try fitting the signal
         try:
-            sigpopt, sigpcov, r2 = shotgun_lsq(timebase, signal, dsinplus_sp,
+            sigpopt, sigpcov, r2 = fit.shotgun_lsq(timebase, signal, dsinplus_sp,
                                            p0=[amplitude_est, frequency_est, 1/damping_est, 0.3, 1, 0.1],
                                            spread=[1.0, 0.4, 3, 0.4, 2, 0.1],
                                            sigma=0.1,
@@ -92,7 +93,7 @@ def pimm_fit_data(analysis):
             r[name]['amplitude'] = amplitude_est
             bestfit = dsinplus_sp(timebase, *[amplitude_est, frequency_est, 1/damping_est, 0.3, 1, 0.1])
 
-        pimm_error_analysis(timebase, signal, bestfit, name=name)
+        fit.error_analysis(timebase, signal, bestfit, name=name)
 
         plt.clf()
         fig = plt.figure()

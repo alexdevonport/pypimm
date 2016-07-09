@@ -4,7 +4,7 @@ import os, sys, re, subprocess, pandas
 def listdir_fullpath(d):
     return [os.path.join(d, f) for f in os.listdir(d)]
 
-def pimm_generate_report(analysis, templatedir):
+def generate_report(analysis, templatedir):
     """
 
     :param name:

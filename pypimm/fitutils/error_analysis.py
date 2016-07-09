@@ -2,7 +2,7 @@ __author__ = 'alex'
 import matplotlib.pyplot as plt
 import os
 
-def pimm_error_analysis(timebase, signal, fit, name):
+def error_analysis(timebase, signal, fit, name):
     """
     This function is used to take a look at the deviation between PyPIMM's
     best fit for the signal and the signal itself. It does the following:
@@ -17,7 +17,6 @@ def pimm_error_analysis(timebase, signal, fit, name):
     """
 
     errsig = signal - fit
-
 
     plt.clf()
     plt.plot(timebase*1E9, errsig)

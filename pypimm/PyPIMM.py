@@ -4,12 +4,12 @@ import os
 import sys
 import logging
 
-from pypimm import PimmAnalysis
-from pimm_load_data import pimm_load_data
-from pimm_fit_data import pimm_fit_data
-from pimm_characterize_fits import pimm_characterize_fits
-from pimm_generate_report import pimm_generate_report
-from get_config_value import get_config_value
+from .PimmAnalysis import PimmAnalysis
+from .load_data import pimm_load_data
+from .fit_data import fit_data
+from .fitutils import characterize_fits
+from .generate_report import generate_report
+from .get_config_value import get_config_value
 
 logging.basicConfig(level=logging.DEBUG)
 logging.disable(logging.DEBUG)
@@ -63,12 +63,12 @@ for filepath in sys.argv[1:]:
     os.mkdir(os.path.join('.', 'Error','histogram'))
 
     # for each signal, calculate fit parameters
-    pimm_fit_data(analysis)
+    fit_data(analysis)
 
     # with all signal fits done, calculate material properties
-    pimm_characterize_fits(analysis)
+    characterize_fits(analysis)
     # TODO: compile results from each previous stage into a report file
-    pimm_generate_report(analysis, pypimmdir)
+    generate_report(analysis, pypimmdir)
 
     # TODO: now that the analysis for this file is over, cd to the original directory
     os.chdir('..')
