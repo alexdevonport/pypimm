@@ -4,19 +4,7 @@
     <bookmark url="file://$PROJECT_DIR$" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8330f7bf-ea91-42c0-8d91-1ecac6f9455b" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pypimm/dataparse/__init__.py" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/pypimm/fit_data.py" afterPath="$PROJECT_DIR$/pypimm/fitutils/fit_data.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/PyPIMM.iml" afterPath="$PROJECT_DIR$/.idea/PyPIMM.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pypimm/PyPIMM.py" afterPath="$PROJECT_DIR$/pypimm/PyPIMM.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pypimm/__init__.py" afterPath="$PROJECT_DIR$/pypimm/__init__.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pypimm/fitutils/__init__.py" afterPath="$PROJECT_DIR$/pypimm/fitutils/__init__.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pypimm/fitutils/characterize_fits.py" afterPath="$PROJECT_DIR$/pypimm/fitutils/characterize_fits.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pypimm/load_data.py" afterPath="$PROJECT_DIR$/pypimm/load_data.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pypimm/fitutils/preprocess.py" afterPath="$PROJECT_DIR$/pypimm/fitutils/preprocess.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pypimm/fitutils/robust_fit.py" afterPath="$PROJECT_DIR$/pypimm/fitutils/robust_fit.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-    </list>
+    <list default="true" id="8330f7bf-ea91-42c0-8d91-1ecac6f9455b" name="Default" comment="" />
     <ignored path="PyPIMM.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
