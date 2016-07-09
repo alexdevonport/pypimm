@@ -7,8 +7,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
 
-from .ProgBar import ProgBar
-import pypimm.fitutils as fit
+from ProgBar import ProgBar
+import fitutils as fit
 rcParams.update({'figure.autolayout': True})
 plt.style.use(['seaborn-paper'])
 

@@ -98,14 +98,3 @@ def dsinplus_sp(x, p0, p1, p2, p3, p4, p5):
 
 def ml_lorentz(z):
     return np.log(1 + 0.5 * z * z)
-
-
-t = np.linspace(0, 5, 512)
-y = dsinplus_sp(t, 2, 3, 1, -3, 1, 0) + np.random.random(512)
-p0 = [1,1,1,1,1,1]
-spr = [1,1,1,1,1,1]
-pestimate = robust_fit(t, y, dsinplus_sp, p0, spread=spr, dist=None)
-print(pestimate)
-yfit = dsinplus_sp(t, *pestimate)
-plt.plot(t,y, t, yfit)
-plt.show()

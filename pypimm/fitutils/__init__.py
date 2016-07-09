@@ -8,6 +8,9 @@ created them.
 .. automodule:: fitutils.bandlimit
     :members:
 
+.. automodule:: fitutils.fit_data
+    :members:
+
 .. automodule:: fitutils.characterize_fits
     :members:
 
@@ -38,6 +41,7 @@ created them.
 """
 
 from .bandlimit import bandlimit
+from .fit_data import fit_data
 from .characterize_fits import characterize_fits
 from .estimate_damping import estimate_damping
 from .estimate_frequency import estimate_frequency

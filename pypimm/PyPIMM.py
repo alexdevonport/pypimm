@@ -4,12 +4,11 @@ import os
 import sys
 import logging
 
-from .PimmAnalysis import PimmAnalysis
-from .load_data import pimm_load_data
-from .fit_data import fit_data
-from .fitutils import characterize_fits
-from .generate_report import generate_report
-from .get_config_value import get_config_value
+from PimmAnalysis import  PimmAnalysis
+from load_data import load_data
+from fitutils import fit_data, characterize_fits
+from generate_report import generate_report
+from get_config_value import get_config_value
 
 logging.basicConfig(level=logging.DEBUG)
 logging.disable(logging.DEBUG)
@@ -40,7 +39,7 @@ for filepath in sys.argv[1:]:
     analysis.set_name(fpnoext)
 
     # Get the signals ant timebase out of the data file and into the object
-    pimm_load_data(analysis, filepath)
+    load_data(analysis, filepath)
 
     # Get configuration values from the config file
     configfp = os.path.join(pypimmdir, 'pypimmconfig.txt')

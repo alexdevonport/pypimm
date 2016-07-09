@@ -2,7 +2,7 @@ import csv
 import re
 from collections import OrderedDict
 
-def pimm_load_data(analysis, filepath):
+def load_data(analysis, filepath):
     '''
     This function loads the data from a PIMM signal sweep into a data
     structure used by the rest of the program. The data file is plaintext

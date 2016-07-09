@@ -4,8 +4,7 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
-
-from pypimm.fitutils import shotgun_lsq
+import fitutils as fit
 
 __author__ = 'alex'
 
@@ -83,7 +82,7 @@ def characterize_fits(analysis):
     hcpguess = 1 * 1000 / (4 * pi)
 
     #fpopt, fpcov = sp.optimize.curve_fit(precession, hsi_msfit, omegas, p0=[msguess, hkguess, hcpguess])
-    fpopt, fpcov, r2 = shotgun_lsq(hsi_msfit, omegas, precession,
+    fpopt, fpcov, r2 = fit.shotgun_lsq(hsi_msfit, omegas, precession,
             p0=[msguess, hkguess, hcpguess],
             spread=[100*1E3, 5*1000/(4*pi), 0.5*1000/(4*pi)], sigma=1, maxiter=1000)
 

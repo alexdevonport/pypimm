@@ -2,7 +2,7 @@ import math
 
 import numpy as np
 
-from pypimm.fitutils import bandlimit
+from fitutils import bandlimit
 
 __author__ = 'alex'
 
