@@ -1,0 +1,8 @@
+- Make use of the standard library configparse module
+
+PyPIMM does the following tasks:
+    - read multiple types of data from a single text file
+    - process sets of data, which are interpreted as signals
+    - create a set of best-fit models
+
+So it should be organized into modules, so that each module is focused on solving one of those tasks.
