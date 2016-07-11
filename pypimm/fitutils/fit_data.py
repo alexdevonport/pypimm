@@ -41,6 +41,7 @@ def fit_data(analysis):
     signals = analysis.get_raw_data()
     configs = analysis.get_configs()
     setname = analysis.get_name()
+    r2thresh = analysis.get_configs('signal fit r squared threshold')
 
     # Perform the signal fit procedure for every signal in the analysis
     # object's raw data
@@ -71,7 +72,7 @@ def fit_data(analysis):
                                            spread=[1.0, 0.4, 3, 0.4, 2, 0.1],
                                            sigma=0.1,
                                            maxiter=1000)
-            if r2 < 0.6:
+            if r2 < r2thresh:
                 r[name]['use for fit'] = False
                 logging.warning('Not using ' + name + ' in final analysis. r^2: '+ str(r2))
             else:

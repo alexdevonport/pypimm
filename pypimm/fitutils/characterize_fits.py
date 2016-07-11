@@ -5,6 +5,7 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 import fitutils as fit
+from collections import OrderedDict
 
 __author__ = 'alex'
 
@@ -23,7 +24,7 @@ def characterize_fits(analysis):
     configs = analysis.get_configs()
 
     # placeholder for characterisation results
-    r = {}
+    r = OrderedDict()
 
     # get an ordered list of all bias fields
     # TODO: remove the neeed for this by using ordered dicts
@@ -123,6 +124,7 @@ def characterize_fits(analysis):
     gmr = 28 * 2 * pi  # Gyromagnetic ratio, GHz/T
     mu0 = 4 * pi * 1E-7 # vacuum permeability (T-m/A)
     ds = np.divide(2, ds) * 1 / (gmr * mu0 * mscgs * 1E3)
+    r['average damping'] = np.mean(ds)
     r['Damping'] = ds
 
     plt.plot(hs, ds, 'bs-')
