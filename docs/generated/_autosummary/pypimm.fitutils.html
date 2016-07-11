@@ -1,0 +1,628 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pypimm.fitutils &mdash; pypimm 0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="pypimm 0.1 documentation" href="../index.html"/>
+        <link rel="prev" title="pypimm" href="pypimm.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> pypimm
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="pypimm.html">pypimm</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">pypimm.fitutils</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">pypimm</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>pypimm.fitutils</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/_autosummary/pypimm.fitutils.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-pypimm.fitutils">
+<span id="pypimm-fitutils"></span><h1>pypimm.fitutils<a class="headerlink" href="#module-pypimm.fitutils" title="Permalink to this headline">¶</a></h1>
+<p>model-fitting utilities</p>
+<p>Contains utilities to process raw time-domain FMR signals, and to fit
+them to a model for their behavior in time and as a function of applied
+bias field. The estimated parameters have a physical significance
+concerning the dynamic magnetic properties of the material that
+created them.</p>
+<span class="target" id="module-fitutils.bandlimit"></span><dl class="function">
+<dt id="fitutils.bandlimit.bandlimit">
+<code class="descclassname">fitutils.bandlimit.</code><code class="descname">bandlimit</code><span class="sig-paren">(</span><em>signal</em>, <em>fs</em>, <em>bw</em><span class="sig-paren">)</span><a class="headerlink" href="#fitutils.bandlimit.bandlimit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Band-limits the given signal using a filter of
+the given order and frequency cutoffs.</p>
+<p>The filter is a linear-phase Gaussian FIR filter
+with a Hamming window.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>signal</strong> &#8211; signal to be filtered, numpy array-like</li>
+<li><strong>fs</strong> &#8211; sampling frequency, float</li>
+<li><strong>bwl</strong> &#8211; pass band lower limit, float</li>
+<li><strong>blu</strong> &#8211; pass band upper limit, float</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">filtered signal, numpy array-like</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="fitutils.bandlimit.gaussian">
+<code class="descclassname">fitutils.bandlimit.</code><code class="descname">gaussian</code><span class="sig-paren">(</span><em>fs</em>, <em>fc</em><span class="sig-paren">)</span><a class="headerlink" href="#fitutils.bandlimit.gaussian" title="Permalink to this definition">¶</a></dt>
+<dd><p>For a given sampling frequency and cutoff frequency,
+returns a tuple containing a gaussian filter six
+standard deviations in length.
+:param fs:
+:param fc:
+:return:</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="fitutils.bandlimit.hamming">
+<code class="descclassname">fitutils.bandlimit.</code><code class="descname">hamming</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="headerlink" href="#fitutils.bandlimit.hamming" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a length-n Hamming window.
+:param n:
+:return:</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="fitutils.bandlimit.ideal_lpf">
+<code class="descclassname">fitutils.bandlimit.</code><code class="descname">ideal_lpf</code><span class="sig-paren">(</span><em>l</em>, <em>corner=1</em><span class="sig-paren">)</span><a class="headerlink" href="#fitutils.bandlimit.ideal_lpf" title="Permalink to this definition">¶</a></dt>
+<dd><p>The &#8220;ideal&#8221; FIR low-pass filter is
+y(n) = wc / pi * sinc(wc * n),
+where wc is the cutoff frequency. This function
+returns the first l terms of this function centered
+about n=0 (i.e. from -l/2 to l/2).
+:param l:
+:param corner:
+:return:</p>
+</dd></dl>
+
+<span class="target" id="module-fitutils.fit_data"></span><dl class="function">
+<dt id="fitutils.fit_data.dsinplus_sp">
+<code class="descclassname">fitutils.fit_data.</code><code class="descname">dsinplus_sp</code><span class="sig-paren">(</span><em>x</em>, <em>p0</em>, <em>p1</em>, <em>p2</em>, <em>p3</em>, <em>p4</em>, <em>p5</em><span class="sig-paren">)</span><a class="headerlink" href="#fitutils.fit_data.dsinplus_sp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exactly the same as dsin, but with separate args because that&#8217;s what Scipy&#8217;s curve_fit takes.
+:param x:
+:param p:
+:return:</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="fitutils.fit_data.fit_data">
+<code class="descclassname">fitutils.fit_data.</code><code class="descname">fit_data</code><span class="sig-paren">(</span><em>analysis</em><span class="sig-paren">)</span><a class="headerlink" href="#fitutils.fit_data.fit_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>The univariate signal given by (timebase, signal) is fit to a
+damped sine of the form</p>
+<div class="math">
+<p><img src="../_images/math/0df0e8e3c8975e95e47622addda4bc07d1c18e85.png" alt="y(t) = A \exp(-g1*(t-t_0)) * cos(2 \pi f (t-t_0)) + B exp(-g_2 (t-t)0))."/></p>
+</div><p>t0 is found first, and is taken as
+the time of the first zero-crossing after a user-specified amount of data to skip. A is
+found next, by shifting the last value of the signal to zero and taking the magnitude of
+the first data point. The frequency and damping are a little trickier to find, and are
+covered in their respective functions.</p>
+<p>Once estimates for the values are made this way, we refine the values by making a
+Lev-Mar best fit.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>timebase</strong> &#8211; time axis of signal</li>
+<li><strong>signal</strong> &#8211; voltage (y-values) of signal</li>
+<li><strong>skip</strong> &#8211; optionally, initial data to skip.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">dict containing amplitude, frequency, damping, and start time of the
+damped cosine that best fits the signal.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="module-fitutils.characterize_fits"></span><dl class="function">
+<dt id="fitutils.characterize_fits.characterize_fits">
+<code class="descclassname">fitutils.characterize_fits.</code><code class="descname">characterize_fits</code><span class="sig-paren">(</span><em>analysis</em><span class="sig-paren">)</span><a class="headerlink" href="#fitutils.characterize_fits.characterize_fits" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>fits</strong> &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="module-fitutils.estimate_damping"></span><dl class="function">
+<dt id="fitutils.estimate_damping.estimate_damping">
+<code class="descclassname">fitutils.estimate_damping.</code><code class="descname">estimate_damping</code><span class="sig-paren">(</span><em>timebase</em>, <em>signal</em>, <em>fguess</em>, <em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#fitutils.estimate_damping.estimate_damping" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>timebase</strong> &#8211; </li>
+<li><strong>signal</strong> &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="module-fitutils.estimate_frequency"></span><dl class="function">
+<dt id="fitutils.estimate_frequency.estimate_frequency">
+<code class="descclassname">fitutils.estimate_frequency.</code><code class="descname">estimate_frequency</code><span class="sig-paren">(</span><em>timebase</em>, <em>signal</em>, <em>resolution=0.01</em>, <em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#fitutils.estimate_frequency.estimate_frequency" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>resolution</strong> &#8211; </li>
+<li><strong>name</strong> &#8211; </li>
+<li><strong>timebase</strong> &#8211; </li>
+<li><strong>signal</strong> &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="module-fitutils.fit_data"></span><dl class="function">
+<dt>
+<code class="descclassname">fitutils.fit_data.</code><code class="descname">dsinplus_sp</code><span class="sig-paren">(</span><em>x</em>, <em>p0</em>, <em>p1</em>, <em>p2</em>, <em>p3</em>, <em>p4</em>, <em>p5</em><span class="sig-paren">)</span></dt>
+<dd><p>Exactly the same as dsin, but with separate args because that&#8217;s what Scipy&#8217;s curve_fit takes.
+:param x:
+:param p:
+:return:</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="descclassname">fitutils.fit_data.</code><code class="descname">fit_data</code><span class="sig-paren">(</span><em>analysis</em><span class="sig-paren">)</span></dt>
+<dd><p>The univariate signal given by (timebase, signal) is fit to a
+damped sine of the form</p>
+<div class="math">
+<p><img src="../_images/math/0df0e8e3c8975e95e47622addda4bc07d1c18e85.png" alt="y(t) = A \exp(-g1*(t-t_0)) * cos(2 \pi f (t-t_0)) + B exp(-g_2 (t-t)0))."/></p>
+</div><p>t0 is found first, and is taken as
+the time of the first zero-crossing after a user-specified amount of data to skip. A is
+found next, by shifting the last value of the signal to zero and taking the magnitude of
+the first data point. The frequency and damping are a little trickier to find, and are
+covered in their respective functions.</p>
+<p>Once estimates for the values are made this way, we refine the values by making a
+Lev-Mar best fit.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>timebase</strong> &#8211; time axis of signal</li>
+<li><strong>signal</strong> &#8211; voltage (y-values) of signal</li>
+<li><strong>skip</strong> &#8211; optionally, initial data to skip.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">dict containing amplitude, frequency, damping, and start time of the
+damped cosine that best fits the signal.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="module-fitutils.fmin_simplex"></span><dl class="function">
+<dt id="fitutils.fmin_simplex.fmin_simplex">
+<code class="descclassname">fitutils.fmin_simplex.</code><code class="descname">fmin_simplex</code><span class="sig-paren">(</span><em>fun</em>, <em>p0</em>, <em>spread=1</em>, <em>rtol=1e-10</em><span class="sig-paren">)</span><a class="headerlink" href="#fitutils.fmin_simplex.fmin_simplex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds a local minimum of
+:param fun: function that takes a list of length M floats as an argument</p>
+<blockquote>
+<div>and returns a float</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>p0</strong> &#8211; list of length M</li>
+<li><strong>spread</strong> &#8211; float</li>
+<li><strong>rtol</strong> &#8211; float</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>:return:tuple of (float, [float, float])</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="fitutils.fmin_simplex.model_fit_mestimate">
+<code class="descclassname">fitutils.fmin_simplex.</code><code class="descname">model_fit_mestimate</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>yfun</em>, <em>dist</em>, <em>p0</em>, <em>sigma=1</em>, <em>spread=1</em><span class="sig-paren">)</span><a class="headerlink" href="#fitutils.fmin_simplex.model_fit_mestimate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes a general M-estimate (maximum likelihood estimate)
+of a function yfun with parameters p to agiven set of data (x, y),
+whose y values have standard deviation sigma, in the presence of
+an arbitrary (normalized) error distribution</p>
+<p>en(x) = exp(-dist(x)).</p>
+<p>This is in contrast to a least-squares estimate, which assumes that
+the error is Gaussian (in other words, when mlfun = 0.5*x*x). This
+allows for a more robust fit of the model to the data: a Lorentzian,
+for example, will be more tolerant of outliers.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> &#8211; </li>
+<li><strong>y</strong> &#8211; </li>
+<li><strong>fun</strong> &#8211; </li>
+<li><strong>mfun</strong> &#8211; </li>
+<li><strong>p0</strong> &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="module-fitutils.preprocess"></span><dl class="function">
+<dt id="fitutils.preprocess.localmax">
+<code class="descclassname">fitutils.preprocess.</code><code class="descname">localmax</code><span class="sig-paren">(</span><em>y</em><span class="sig-paren">)</span><a class="headerlink" href="#fitutils.preprocess.localmax" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div>Finds the index of the first local maximum in the signal y.</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>y</strong> &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="fitutils.preprocess.preprocess">
+<code class="descclassname">fitutils.preprocess.</code><code class="descname">preprocess</code><span class="sig-paren">(</span><em>timebase</em>, <em>signal</em>, <em>configs</em><span class="sig-paren">)</span><a class="headerlink" href="#fitutils.preprocess.preprocess" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>timebase</strong> &#8211; </li>
+<li><strong>signal</strong> &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="module-fitutils.robust_fit"></span><dl class="function">
+<dt id="fitutils.robust_fit.dsinplus_sp">
+<code class="descclassname">fitutils.robust_fit.</code><code class="descname">dsinplus_sp</code><span class="sig-paren">(</span><em>x</em>, <em>p0</em>, <em>p1</em>, <em>p2</em>, <em>p3</em>, <em>p4</em>, <em>p5</em><span class="sig-paren">)</span><a class="headerlink" href="#fitutils.robust_fit.dsinplus_sp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exactly the same as dsin, but with separate args because that&#8217;s what Scipy&#8217;s curve_fit takes.
+:param x:
+:param p:
+:return:</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="fitutils.robust_fit.ndnormal">
+<code class="descclassname">fitutils.robust_fit.</code><code class="descname">ndnormal</code><span class="sig-paren">(</span><em>mus</em>, <em>sigmas</em><span class="sig-paren">)</span><a class="headerlink" href="#fitutils.robust_fit.ndnormal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a list of normally distributed random numbers, with each item having
+its own mean and standard deviation.
+:param n: Int
+:param mus: list of Floats
+:param sigmas: list of Floats
+:return:</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="fitutils.robust_fit.robust_fit">
+<code class="descclassname">fitutils.robust_fit.</code><code class="descname">robust_fit</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>fun</em>, <em>p0</em>, <em>spread</em>, <em>dist=None</em>, <em>sigma=1</em>, <em>maxiter=1000</em><span class="sig-paren">)</span><a class="headerlink" href="#fitutils.robust_fit.robust_fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fits data to a model using robust initial guess and
+parameter estimation tecnhiques.</p>
+<p>Initial guess refinement is done with shotgun least-squares,
+and model fitting is done via maximum-likelihood estimates
+powered by Nelder-Mead cumulative error minimization.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> &#8211; </li>
+<li><strong>y</strong> &#8211; </li>
+<li><strong>fun</strong> &#8211; </li>
+<li><strong>p0</strong> &#8211; </li>
+<li><strong>spread</strong> &#8211; </li>
+<li><strong>dist</strong> &#8211; </li>
+<li><strong>sigma</strong> &#8211; </li>
+<li><strong>maxiter</strong> &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="module-fitutils.shotgun_lsq"></span><dl class="function">
+<dt id="fitutils.shotgun_lsq.ndnormal">
+<code class="descclassname">fitutils.shotgun_lsq.</code><code class="descname">ndnormal</code><span class="sig-paren">(</span><em>mus</em>, <em>sigmas</em><span class="sig-paren">)</span><a class="headerlink" href="#fitutils.shotgun_lsq.ndnormal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a list of normally distributed random numbers, with each item having
+its own mean and standard deviation.
+:param n: Int
+:param mus: list of Floats
+:param sigmas: list of Floats
+:return:</p>
+</dd></dl>
+
+<span class="target" id="module-fitutils.error_analysis"></span><dl class="function">
+<dt id="fitutils.error_analysis.error_analysis">
+<code class="descclassname">fitutils.error_analysis.</code><code class="descname">error_analysis</code><span class="sig-paren">(</span><em>timebase</em>, <em>signal</em>, <em>fit</em>, <em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#fitutils.error_analysis.error_analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is used to take a look at the deviation between PyPIMM&#8217;s
+best fit for the signal and the signal itself. It does the following:</p>
+<blockquote>
+<div><p>-compute the histogram and spectrum of the fit error signal (data - fit)
+-attempt to fit the histogram to three error distributions (Gaussian</p>
+<blockquote>
+<div>single-sided exponential, Lorentzian)</div></blockquote>
+<p>-Attempts to fit the noise spectrum to several noise power spectral densities</p>
+</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>timebase</strong> &#8211; </li>
+<li><strong>signal</strong> &#8211; </li>
+<li><strong>analysis</strong> &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p class="rubric">Functions</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">bandlimit</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">characterize_fits</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#fitutils.error_analysis.error_analysis" title="fitutils.error_analysis.error_analysis"><code class="xref py py-obj docutils literal"><span class="pre">error_analysis</span></code></a>(timebase,&nbsp;signal,&nbsp;fit,&nbsp;name)</td>
+<td>This function is used to take a look at the deviation between PyPIMM&#8217;s best fit for the signal and the signal itself.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">estimate_damping</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">estimate_frequency</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">fit_data</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">fmin_simplex</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">preprocess</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">robust_fit</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">shotgun_lsq</span></code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="pypimm.html" class="btn btn-neutral" title="pypimm" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Alex Devonport.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

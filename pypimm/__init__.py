@@ -1,3 +1,4 @@
+"""
+main pypimm module
+"""
 __author__ = 'alex'
-
-from pypimm.dataparse import PimmAnalysis

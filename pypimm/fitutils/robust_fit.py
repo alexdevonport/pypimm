@@ -29,7 +29,7 @@ def robust_fit(x, y, fun, p0, spread, dist=None, sigma=1, maxiter=1000):
         dist = lambda xi: np.multiply(xi, xi)
     cumres = lambda p: np.sum(dist(y - fun(x, *p)))
 
-    bestguess = shotgun_lsq(x, y, fun, p0, spread, dist=dist, sigma=sigma, maxiter=maxiter)
+    bestguess, _ = shotgun_lsq(x, y, fun, p0, spread, dist=dist, sigma=sigma, maxiter=maxiter)
     optres = scipy.optimize.minimize(cumres, bestguess, method='Nelder-Mead')
     print(optres)
     bestp = optres.x[0]
