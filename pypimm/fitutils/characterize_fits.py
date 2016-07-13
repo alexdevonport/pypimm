@@ -34,6 +34,7 @@ def characterize_fits(analysis):
     fs = []
     ds = []
     cs = []
+    dffs = []
 
     # Some of the calculated values in fs and ds may be bad, if we couldn't fit the
     # signal. If that's the case, those signals will have been flagged. We'll get
@@ -49,13 +50,16 @@ def characterize_fits(analysis):
                 ds.append(fits[key]['damping'])
                 amps.append(fits[key]['amplitude'])
                 cs.append(fits[key]['chi square'])
+                dffs.append(fits[key]['delta f / f'])
+
 
     # Since the dict was unordered this whole time, we need to sort all
     # three of these together
-    hs, fs, ds, amps, cs = (list(t) for t in zip(*sorted(zip(hs, fs, ds, amps, cs))))
+    hs, fs, ds, amps, cs, dffs = (list(t) for t in zip(*sorted(zip(hs, fs, ds, amps, cs, dffs))))
     r['Bias field (Oe)'] = hs
     r['Precessional frequency (GHz)'] = fs
     r['Chi square'] = cs
+    r['delta f / f'] = dffs
 
     # The damping values may be negative. This is because the absolute value is
     # used in the fit to remove negative guesses. We take care of that here.

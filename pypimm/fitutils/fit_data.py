@@ -59,10 +59,13 @@ def fit_data(analysis):
         r[name] = {}
         timebase = analysis.get_timebase()
         timebase, signal = fit.preprocess(timebase, signal, configs)
+        fs = 1 / (timebase[1] - timebase[0])
         # make amplitude estimate
         amplitude_est = np.max(signal[:25])
         # make frequency estimate
         frequency_est = fit.estimate_frequency(timebase, signal, name=name)
+        # delta f / f
+        r[name]['delta f / f'] = fit.spectrum_fmhw(signal, fs, name=name)
         # make damping estimate
         damping_est = fit.estimate_damping(timebase, signal, frequency_est, name=name)
         # With those estimates ready, we can try fitting the signal

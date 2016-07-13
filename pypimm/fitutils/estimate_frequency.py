@@ -41,14 +41,8 @@ def estimate_frequency(timebase, signal, resolution=0.01, name=None):
     #nyq = int(len(pspect)/2)
     #flist = np.array(range(len(pspect))) * fs / npts
     flist, pspect = scipy.signal.periodogram(signal, fs)
-    plt.clf()
-    #plt.plot(flist[:nyq] , pspect[:nyq])
-    plt.plot(flist, pspect)
-    plt.xlabel('Frequency (GHz)')
-    plt.ylabel('PSD (V$^2$ / GHz)')
-    plt.title(name + ' Spectrum')
-    fp = os.path.join('.','spectra', name + 'spectrum.png')
-    plt.savefig(fp)
+    pspectmhalf = pspect - 0.5 * np.max(pspect)
+
     # find the maximum spectrum value & its index
     # since we're looking at real data, we'll only consider the first half of the spectrum
     maxind = (pspect[:int(len(pspect)/2)]).argmax()

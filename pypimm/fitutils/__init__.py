@@ -52,3 +52,4 @@ from .preprocess import preprocess
 from .robust_fit import robust_fit
 from .shotgun_lsq import shotgun_lsq
 from .error_analysis import error_analysis
+from .fwhm import spectrum_fmhw
