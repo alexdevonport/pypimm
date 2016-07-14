@@ -53,15 +53,22 @@ class PimmAnalysis():
     def get_progress(self):
         return self.progress
 
+    def set_configs(self, newconfigs):
+        self.configs = newconfigs
+        return None
+
+    """
     def set_configs(self, newconfigkey = None, newconfigval=None):
         if self.configs is None:
             self.configs = {newconfigkey:newconfigval}
         else:
             self.configs[newconfigkey] = newconfigval
         return None
+    """
 
     def get_configs(self, configkey=None):
         if configkey is None:
             return self.configs
         else:
-            return self.configs[configkey]
+            ckey1, ckey2 = configkey
+            return self.configs[ckey1][ckey2]

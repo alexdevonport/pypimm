@@ -10,8 +10,13 @@ from fitutils import fit_data, characterize_fits
 from generate_report import generate_report
 from get_config_value import get_config_value
 
-logging.basicConfig(level=logging.DEBUG)
+#logging.basicConfig(level=logging.DEBUG)
 logging.disable(logging.DEBUG)
+logging.disable(logging.WARNING)
+logging.basicConfig(format=' %(asctime)s - %(levelname)s - %(message)s',
+                    filename='skipped_data.log',
+                    level=logging.WARNING,)
+
 timebase_key = 'time(s)'
 
 # initialize data structures for signal data, signal fits, and characterization

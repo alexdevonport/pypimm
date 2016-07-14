@@ -25,15 +25,9 @@ def shotgun_lsq(x, y, fun, p0, spread, sigma=1, maxiter = 1000):
         if mse < bestmse:
             bestmse = mse
             bestp = newp0
-    bestp, bestcov = scipy.optimize.curve_fit(fun, x, y, p0=bestp)
-    bestfit = fun(x, *bestp)
-    ssres = sos(y - bestfit)  # sum of squares of the residuals
-    logging.debug('Chi Square: ' + str(bestmse))
-
-    ymean = np.mean(y)
-    sstot = sos(y - ymean)    # total sum of squares
-    r = 1.0 - ssres / sstot
-    return bestp, bestcov, r
+        if k % 250 == 0:
+            spread = np.multiply(spread, 1.25)
+    return bestp
 
 def ndnormal(mus, sigmas):
     """

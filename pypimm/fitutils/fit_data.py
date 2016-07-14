@@ -2,10 +2,12 @@ __author__ = 'alex'
 
 from math import pi
 import logging
+import re
 
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
+import scipy.optimize
 
 from ProgBar import ProgBar
 import fitutils as fit
@@ -41,8 +43,8 @@ def fit_data(analysis):
     signals = analysis.get_raw_data()
     configs = analysis.get_configs()
     setname = analysis.get_name()
-    r2thresh = analysis.get_configs('signal fit r squared threshold')
-
+    #r2thresh = analysis.get_configs(('fit-params', 'signal fit r squared threshold'))
+    r2thresh = configs.getfloat('fit-params', 'signal fit r squared threshold')
     # Perform the signal fit procedure for every signal in the analysis
     # object's raw data
     r = {}  # temporary storage for fit results
@@ -69,33 +71,36 @@ def fit_data(analysis):
         # make damping estimate
         damping_est = fit.estimate_damping(timebase, signal, frequency_est, name=name)
         # With those estimates ready, we can try fitting the signal
-        try:
-            sigpopt, sigpcov, r2 = fit.shotgun_lsq(timebase, signal, dsinplus_sp,
-                                           p0=[amplitude_est, frequency_est, 1/damping_est, 0.3, 1, 0.1],
-                                           spread=[1.0, 0.4, 3, 0.4, 2, 0.1],
-                                           sigma=0.1,
-                                           maxiter=1000)
-            if r2 < r2thresh:
-                r[name]['use for fit'] = False
-                logging.warning('Not using ' + name + ' in final analysis. r^2: '+ str(r2))
-            else:
-                r[name]['use for fit'] = True
-            r[name]['frequency'] = sigpopt[1]
-            r[name]['damping']   = sigpopt[2]
-            r[name]['amplitude'] = sigpopt[0]
-            r[name]['chi square'] = r
-            bestfit = dsinplus_sp(timebase, *sigpopt)
-            chisq = np.sum(np.multiply(signal - bestfit, signal - bestfit))
-            r[name]['chi square'] = chisq
-        except RuntimeError:
-            r2 = 0
+
+        if configs.getboolean('fit-params', 'use grid-lsq'):
+            # a whole bunch of crap is gonna go here
+            pass
+        if configs.getboolean('fit-params', 'use shotgun-lsq'):
+            spreads = str_to_floats(configs.get('fit-params', 'shotgun-lsq spreads'))
+            # TODO: later on, shotgun-lsq won't do lev mar, so we'll have to include a call for that
+            bestp = fit.shotgun_lsq(timebase, signal, dsinplus_sp,
+                                       p0=[amplitude_est, frequency_est, 1/damping_est, 0.3, 1, 0.1],
+                                       spread=spreads,
+                                       sigma=0.1,
+                                       maxiter=1000)
+        bestp, bestcov = scipy.optimize.curve_fit(dsinplus_sp, timebase, signal, p0=bestp)
+        bestfit = dsinplus_sp(timebase, *bestp)
+        ssres = sos(signal - bestfit)  # sum of squares of the residuals
+        sigmean = np.mean(signal)
+        sstot = sos(signal - sigmean)    # total sum of squares
+        r2 = 1.0 - ssres / sstot
+        #return bestp, bestcov, r
+        if r2 < r2thresh:
             r[name]['use for fit'] = False
-            r['chi square'] = 0
-            #print('Fitting failed for signal '+name+'. Using estimate values.')
-            r[name]['frequency'] = frequency_est
-            r[name]['damping']   = damping_est
-            r[name]['amplitude'] = amplitude_est
-            bestfit = dsinplus_sp(timebase, *[amplitude_est, frequency_est, 1/damping_est, 0.3, 1, 0.1])
+            logging.warning('Not using ' + name + ' in final analysis. r^2: '+ str(r2))
+        else:
+            r[name]['use for fit'] = True
+        r[name]['frequency'] = bestp[1]
+        r[name]['damping']   = bestp[2]
+        r[name]['amplitude'] = bestp[0]
+        r[name]['chi square'] = r
+        chisq = np.sum(np.multiply(signal - bestfit, signal - bestfit))
+        r[name]['chi square'] = chisq
 
         fit.error_analysis(timebase, signal, bestfit, name=name)
 
@@ -137,3 +142,10 @@ def dsinplus_sp(x, p0, p1, p2, p3, p4, p5):
     y[y == np.inf] = 0
     y[y == np.nan] = 0
     return y
+
+def str_to_floats(s):
+    s = re.sub('[\[\]\(\)\,]', ' ', s)
+    return [float(elt) for elt in s.split()]
+
+def sos(x):
+    return np.sum(np.multiply(x, x))

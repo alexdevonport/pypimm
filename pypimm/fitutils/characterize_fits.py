@@ -70,7 +70,7 @@ def characterize_fits(analysis):
     # Prepare H and f data for calculating Ms and Hk
     # TODO: remove all frequency data points below a certain field, so that Hk gets
     # TODO: fit correctly
-    hkthresh = configs['hk field fit thresh']
+    hkthresh = configs.getfloat('characterize', 'hk field fit thresh')
     hs_msfit = []
     fs_msfit = []
     for h, f in zip(hs,fs):

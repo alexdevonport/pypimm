@@ -1,6 +1,20 @@
-initial data skip=0.4
-data fit length=5.0
-hk field fit thresh=20
-bandlimit=4
-use global max=1
-signal fit r squared threshold=0.5
+[preprocess]
+initial data skip = 0.0 ; nanoseconds of data to skip before finding peak
+data fit length = 5.0   ; nanoseconds of data to use for fit
+bandlimit = 4           ; bandwidth of Gaussian preprocess filter (GHz)
+use global max = yes    ; Start fit at highest overall peak after skip, or the nearest one?
+
+[fit-params]
+signal fit r squared threshold = 0.875  ; Signal fits with r^2 below this value aren't used
+                                        ; to fit Ms and Hk
+
+use grid-lsq = no
+grid starts  =
+grid stops   =
+grid lengths =
+
+use shotgun-lsq = yes  # if you said yes to both, we'll use the better of the two guesses
+shotgun-lsq spreads = 1.0, 0.4, 3, 0.4, 2, 0.1
+
+[characterize]
+hk field fit thresh = 20

@@ -21,7 +21,7 @@ def preprocess(timebase, signal, configs):
 
     ts = (timebase[1] - timebase[0])  # sampling frequency
     fs = 1 / ts
-    bw = 1E9 * configs['bandlimit']
+    bw = 1E9 * configs.getfloat('preprocess', 'bandlimit')
     signal = bandlimit(signal, fs, bw)
 
     # skip some data. set data[0] to be the first maximum after the skip, so that the
@@ -32,8 +32,8 @@ def preprocess(timebase, signal, configs):
     # arbitrary skip
     # get values from the config file
     #configfp = os.path.join(configdir, 'pypimmconfig.txt')
-    tskip = 1E-9 * configs['initial data skip']
-    ttrunc = 1E-9 * configs['data fit length']
+    tskip = 1E-9 * configs.getfloat('preprocess', 'initial data skip')
+    ttrunc = 1E-9 * configs.getfloat('preprocess', 'data fit length')
 
     nskip = math.ceil(tskip / ts)
     ntrunc = min(math.ceil(ttrunc / ts), len(signal))  # we don't want the chosen length to be longer than the signal!
@@ -41,7 +41,7 @@ def preprocess(timebase, signal, configs):
     skipmean = np.mean(signal[nskip:])
     signal = signal[nskip:] - skipmean
     # next zero crossing
-    if configs['use global max']:
+    if configs.getboolean('preprocess', 'use global max'):
         pk = globalmax(signal)
     else:
         pk = localmax(signal)
