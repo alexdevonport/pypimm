@@ -34,6 +34,9 @@ created them.
 .. automodule:: fitutils.robust_fit
     :members:
 
+.. automodule:: fitutils.grid_lsq
+    :members:
+
 .. automodule:: fitutils.shotgun_lsq
     :members:
 
@@ -50,6 +53,8 @@ from .estimate_frequency import estimate_frequency
 from .fmin_simplex import fmin_simplex
 from .preprocess import preprocess
 from .robust_fit import robust_fit
+from .grid_lsq import grid_lsq
 from .shotgun_lsq import shotgun_lsq
 from .error_analysis import error_analysis
 from .fwhm import spectrum_fmhw
+from .goodness_of_fit import redchi2

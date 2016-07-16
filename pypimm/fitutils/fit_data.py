@@ -73,22 +73,27 @@ def fit_data(analysis):
         # With those estimates ready, we can try fitting the signal
 
         if configs.getboolean('fit-params', 'use grid-lsq'):
-            # a whole bunch of crap is gonna go here
-            pass
+            gstarts = str_to_floats(configs.get('fit-params', 'grid starts'))
+            gstops = str_to_floats(configs.get('fit-params', 'grid stops'))
+            glengths = str_to_floats(configs.get('fit-params', 'grid lengths'))
+            gdims = zip(gstarts, gstops, glengths)
+            bestp = fit.grid_lsq(dsinplus_sp, timebase, signal, gdims)
         if configs.getboolean('fit-params', 'use shotgun-lsq'):
             spreads = str_to_floats(configs.get('fit-params', 'shotgun-lsq spreads'))
-            # TODO: later on, shotgun-lsq won't do lev mar, so we'll have to include a call for that
             bestp = fit.shotgun_lsq(timebase, signal, dsinplus_sp,
                                        p0=[amplitude_est, frequency_est, 1/damping_est, 0.3, 1, 0.1],
                                        spread=spreads,
                                        sigma=0.1,
-                                       maxiter=1000)
+                                       maxiter=2000)
         bestp, bestcov = scipy.optimize.curve_fit(dsinplus_sp, timebase, signal, p0=bestp)
         bestfit = dsinplus_sp(timebase, *bestp)
         ssres = sos(signal - bestfit)  # sum of squares of the residuals
         sigmean = np.mean(signal)
         sstot = sos(signal - sigmean)    # total sum of squares
         r2 = 1.0 - ssres / sstot
+        c2r = fit.redchi2(dsinplus_sp, timebase, signal, bestp, sigma=2.5E-3)
+        print('in {name}, r^2={rsq:3.2f}, reduced chi^2={rcsq:3f}'
+              .format(name=name, rsq=r2, rcsq=c2r))
         #return bestp, bestcov, r
         if r2 < r2thresh:
             r[name]['use for fit'] = False
@@ -109,8 +114,9 @@ def fit_data(analysis):
         ax = fig.add_subplot(111)
         plt.plot(timebase, signal, 'b.', label='data')
         plt.plot(timebase, bestfit, 'g', label='fit')
-        paramstr = 'r$^2$ = ' + "{0:.3f}".format(r2)
-        plt.text(0.75, 0.25,paramstr,
+        paramstr1 = r'r$^2$ = ' + "{0:.3f}\n".format(r2)
+        paramstr2 = r'$\chi^2_\nu$ = ' + "{0:3.3f}".format(c2r)
+        plt.text(0.75, 0.25,paramstr1+paramstr2,
             horizontalalignment='center',
             verticalalignment='center',
             transform = ax.transAxes)
@@ -137,8 +143,9 @@ def dsinplus_sp(x, p0, p1, p2, p3, p4, p5):
     :return:
     """
     x = np.array(x)
-    y =   p0 * np.cos((x-p5)*2*pi*p1)*np.exp(-(x-p5)/abs(p2)) \
-        + p3 * np.exp(-(x-p5)/abs(p4))
+    #y =   p0 * np.cos((x-p5)*2*pi*p1)*np.exp(-(x-p5)/abs(p2)) \
+    #    + p3 * np.exp(-(x-p5)/abs(p4))
+    y =   p0 * np.cos((x-p5)*2*pi*p1)*np.exp(-(x-p5)/abs(p2))
     y[y == np.inf] = 0
     y[y == np.nan] = 0
     return y

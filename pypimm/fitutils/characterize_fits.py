@@ -1,7 +1,7 @@
 import re
 from math import pi
 import os
-
+import scipy.optimize
 import matplotlib.pyplot as plt
 import numpy as np
 import fitutils as fit
@@ -10,7 +10,7 @@ from collections import OrderedDict
 __author__ = 'alex'
 
 
-#def pimm_characterize_fits(fits, name=None):
+# def pimm_characterize_fits(fits, name=None):
 def characterize_fits(analysis):
     '''
 
@@ -73,7 +73,7 @@ def characterize_fits(analysis):
     hkthresh = configs.getfloat('characterize', 'hk field fit thresh')
     hs_msfit = []
     fs_msfit = []
-    for h, f in zip(hs,fs):
+    for h, f in zip(hs, fs):
         if abs(h) > hkthresh:
             hs_msfit.append(h)
             fs_msfit.append(f)
@@ -86,17 +86,24 @@ def characterize_fits(analysis):
     msguess = 800 * 1E3
     hcpguess = 1 * 1000 / (4 * pi)
 
-    #fpopt, fpcov = sp.optimize.curve_fit(precession, hsi_msfit, omegas, p0=[msguess, hkguess, hcpguess])
-    fpopt, fpcov, r2 = fit.shotgun_lsq(hsi_msfit, omegas, precession,
-            p0=[msguess, hkguess, hcpguess],
-            spread=[100*1E3, 5*1000/(4*pi), 0.5*1000/(4*pi)], sigma=1, maxiter=1000)
+    # fpopt, fpcov = sp.optimize.curve_fit(precession, hsi_msfit, omegas, p0=[msguess, hkguess, hcpguess])
+    bestp = fit.shotgun_lsq(hsi_msfit, omegas, precession,
+                            p0=[msguess, hkguess, hcpguess],
+                            spread=[100 * 1E3, 5 * 1000 / (4 * pi), 0.5 * 1000 / (4 * pi)], sigma=1, maxiter=1000)
 
-    hs_bestfit = np.linspace(np.min(hs), np.max(hs),1000)
-    hsi_bestfit = hs_bestfit * 1000 / (4*pi)
-    omega_bestfit = precession(hsi_bestfit, *fpopt)
-    mscgs = fpopt[0] * 1E-3
-    hkcgs = fpopt[1] * 4 * pi / 1000
-    hcpcgs = fpopt[2] * 4 * pi / 1000
+    bestp, bestcov = scipy.optimize.curve_fit(precession, hsi_msfit, omegas, p0=bestp)
+    bestfit = precession(hsi_msfit, *bestp)
+    ssres = sos(omegas - bestfit)  # sum of squares of the residuals
+    sigmean = np.mean(omegas)
+    sstot = sos(omegas - sigmean)  # total sum of squares
+    r2 = 1.0 - ssres / sstot
+
+    hs_bestfit = np.linspace(np.min(hs), np.max(hs), 1000)
+    hsi_bestfit = hs_bestfit * 1000 / (4 * pi)
+    omega_bestfit = precession(hsi_bestfit, *bestp)
+    mscgs = bestp[0] * 1E-3
+    hkcgs = bestp[1] * 4 * pi / 1000
+    hcpcgs = bestp[2] * 4 * pi / 1000
 
     # prepare frequency vs field plot
     plt.clf()
@@ -107,16 +114,16 @@ def characterize_fits(analysis):
     plt.legend()
     plt.xlabel('bias field (Oe)')
     plt.ylabel('$\omega_p$ (rad/s)')
-    plt.title('Precessional frequency\n'+name)
+    plt.title('Precessional frequency\n' + name)
     paramstr = ('$M_s$ = ' + "{0:.2f}".format(mscgs) + ' emu/cm^3\n'
-              + '$H_k$ = ' + "{0:.2f}".format(hkcgs) + ' Oe\n'
-              + '$H_{cp}$ = ' + "{0:.2f}".format(hcpcgs) + ' Oe\n'
-              + '$r^2$ = '+ "{0:.4f}".format(r2))
-    plt.text(0.75, 0.25,paramstr,
-        horizontalalignment='center',
-        verticalalignment='center',
-        transform = ax.transAxes)
-    fp = os.path.join('.',name+'-f-vs-h.png')
+                + '$H_k$ = ' + "{0:.2f}".format(hkcgs) + ' Oe\n'
+                + '$H_{cp}$ = ' + "{0:.2f}".format(hcpcgs) + ' Oe\n'
+                + '$r^2$ = ' + "{0:.4f}".format(r2))
+    plt.text(0.75, 0.25, paramstr,
+             horizontalalignment='center',
+             verticalalignment='center',
+             transform=ax.transAxes)
+    fp = os.path.join('.', name + '-f-vs-h.png')
     plt.savefig(fp, dpi=150)
     plt.clf()
     r['Ms (emu/cm^3)'] = mscgs
@@ -126,7 +133,7 @@ def characterize_fits(analysis):
 
     # prepare damping vs field plot
     gmr = 28 * 2 * pi  # Gyromagnetic ratio, GHz/T
-    mu0 = 4 * pi * 1E-7 # vacuum permeability (T-m/A)
+    mu0 = 4 * pi * 1E-7  # vacuum permeability (T-m/A)
     ds = np.divide(2, ds) * 1 / (gmr * mu0 * mscgs * 1E3)
     r['average damping'] = np.mean(ds)
     r['Damping'] = ds
@@ -134,16 +141,16 @@ def characterize_fits(analysis):
     plt.plot(hs, ds, 'bs-')
     plt.xlabel('bias field (Oe)')
     plt.ylabel('damping')
-    plt.title('Damping\n'+name[:10]+'...')
-    plt.savefig(r'./'+name+'-d-vs-h.png')
+    plt.title('Damping\n' + name[:10] + '...')
+    plt.savefig(r'./' + name + '-d-vs-h.png')
     plt.clf()
 
     # prepare amplitude vs field plot
     plt.plot(hs, amps, 'bo ')
     plt.xlabel('bias field (Oe)')
     plt.ylabel('amplitude (mV)')
-    plt.title('sinusoidal fit amplitude\n'+name[:10]+'...')
-    plt.savefig(os.path.join('.',name+'-ampl.png'))
+    plt.title('sinusoidal fit amplitude\n' + name[:10] + '...')
+    plt.savefig(os.path.join('.', name + '-ampl.png'))
     plt.clf()
 
 
@@ -152,24 +159,28 @@ def characterize_fits(analysis):
     plt.xlabel('bias field (Oe)')
     plt.ylabel('Chi square')
     plt.title('Chi-square error of signal fits')
-    plt.savefig(os.path.join('.',name+'-chi-square.png'))
+    plt.savefig(os.path.join('.', name + '-chi-square.png'))
     plt.clf()
     n, bins, patches = plt.hist(cs, 100, normed=1, alpha=0.75)
     plt.title('Chi-square error of signal fits')
-    plt.savefig(os.path.join('.',name+'-chi-square-hist.png'))
+    plt.savefig(os.path.join('.', name + '-chi-square-hist.png'))
     plt.clf()
 
     # Now that that's all done, add the results to the analysis object
     analysis.set_results(r)
     return None
 
+
 def precession(x, p0, p1, p2):
-    mub = 9.274E-24   # Bohr Magneton (J/T)
-    mu0 = 4 * pi * 1E-7 # vacuum permeability (T-m/A)
+    mub = 9.274E-24  # Bohr Magneton (J/T)
+    mu0 = 4 * pi * 1E-7  # vacuum permeability (T-m/A)
     hbar = 1.06E-34  # reduced Planck's constant (J-S)
-    g = 2          # Spectroscopic splitting factor, from Silva et al
+    g = 2  # Spectroscopic splitting factor, from Silva et al
     gamma = g * mub / hbar
-    #fp = gamma * mu0 * np.sqrt(p0*np.abs(x + p1))
-    fp = gamma * mu0 * np.sqrt(p0*(p1 + np.abs(x + p2)))
+    # fp = gamma * mu0 * np.sqrt(p0*np.abs(x + p1))
+    fp = gamma * mu0 * np.sqrt(p0 * (p1 + np.abs(x + p2)))
     return fp
 
+
+def sos(x):
+    return np.sum(np.multiply(x, x))
