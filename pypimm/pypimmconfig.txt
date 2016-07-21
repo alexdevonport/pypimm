@@ -1,12 +1,12 @@
 [preprocess]
-initial data skip = 0.9 # nanoseconds of data to skip before finding peak
-data fit length = 5   # nanoseconds of data to use for fit
+initial data skip = 1.2 # nanoseconds of data to skip before finding peak
+data fit length = 3   # nanoseconds of data to use for fit
 bandlimit = 4         # bandwidth of Gaussian preprocess filter (GHz)
 use global max = no    # Start fit at highest overall peak after skip, or the nearest one?
 zero mean length = 1.0
 
 [fit-params]
-stdev measurement length = 2 # nanoseconds of data to use to calculate signal noise
+stdev measurement length = 1.0 # nanoseconds of data to use to calculate signal noise
 max SNR = 5.0
 
 reduced chi squared lower thresh = 0.6  # Signal fits with reduced chi^2 below this value aren't used
@@ -26,4 +26,4 @@ use shotgun-lsq = yes  # if you said yes to both, we'll use the better of the tw
 shotgun-lsq spreads = 10.0, 0.001, 1, 0.4, 2, 0.3, 0.1
 
 [characterize]
-hk field fit thresh = 25
+hk field fit thresh = 40

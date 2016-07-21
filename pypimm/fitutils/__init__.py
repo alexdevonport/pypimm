@@ -59,4 +59,4 @@ from .error_analysis import error_analysis
 from .fwhm import spectrum_fmhw
 from .confidence_limits import conf_chi2
 from .goodness_of_fit import (redchi2, nlcorr, minimize_reduced_chi2,
-    minimize_absolute, minimize_lorentz, basin_lsq)
+    minimize_absolute, minimize_lorentz, basin_lsq, snr)

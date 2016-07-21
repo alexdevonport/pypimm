@@ -26,6 +26,7 @@ def preprocess(timebase, signal, configs):
     # originally, use of s and ns for the timbase was inconsistent in this program.
     # It's ns all the way after this.
     timebase = timebase * 1E9
+    tunf = timebase
     ts = (timebase[1] - timebase[0])  # sampling frequency
     fs = 1 / ts
 
@@ -35,6 +36,8 @@ def preprocess(timebase, signal, configs):
     # via FFT
 
     bw = configs.getfloat('preprocess', 'bandlimit')
+    unf = signal
+    raw = signal
     signal = bandlimit(signal, fs, bw)
     #signal = scipy.signal.savgol_filter(signal, 21, 3)
     #signal = sm.nonparametric.lowess(signal, timebase, frac=0.02)[:,1]
@@ -55,7 +58,9 @@ def preprocess(timebase, signal, configs):
     nskip = math.ceil(tskip / ts)
     ntrunc = min(math.ceil(ttrunc / ts), len(signal))  # we don't want the chosen length to be longer than the signal!
     signal = signal[nskip:]
+    unf = unf[nskip:]
     timebase = timebase[nskip:] - timebase[nskip]
+    tunf = tunf - tunf[nskip]
     # next zero crossing
     #if configs.getboolean('preprocess', 'use global max'):
     #    pk = globalmax(signal)
@@ -67,12 +72,14 @@ def preprocess(timebase, signal, configs):
     # truncate the signal
     timebase = timebase[:ntrunc]
     signal = signal[:ntrunc]
+    unf = unf[:ntrunc]
 
     # DC shift the signal so that the end data is centered about zero
     dcs = np.mean(signal[-nzero:])
     signal -= dcs
+    unf -= dcs
 
-    return (timebase, signal)
+    return (timebase, signal, tunf, unf, raw)
 
 
 

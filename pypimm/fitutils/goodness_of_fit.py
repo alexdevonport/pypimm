@@ -64,6 +64,16 @@ def redchi2(fun, x, y, p, sigma=1.0):
     a = np.divide(y - fun(x, *p), sigma)
     return np.sum(np.power(a,2)) / (n - m)
 
+def snr(signoise, sig):
+    sssig = sumsquare(sig)
+    noise = signoise - sig
+    ssnoise = sumsquare(noise)
+    r = (sssig - ssnoise) / ssnoise
+    return r
+
+def sumsquare(x):
+    return np.sum(np.power(x, 2))
+
 def chi2(fun, x, y, p, sigma=1.0):
     a = np.divide(y - fun(x, *p), sigma)
     return np.sum(np.power(a,2))

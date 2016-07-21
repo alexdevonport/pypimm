@@ -36,6 +36,7 @@ def characterize_fits(analysis):
     cs = []
     dffs = []
     sps = []
+    snrs = []
 
     # Some of the calculated values in fs and ds may be bad, if we couldn't fit the
     # signal. If that's the case, those signals will have been flagged. We'll get
@@ -53,15 +54,17 @@ def characterize_fits(analysis):
                 cs.append(fits[key]['chi square'])
                 dffs.append(fits[key]['delta f / f'])
                 sps.append(fits[key]['spectral peak'])
+                snrs.append(fits[key]['best fit SNR'])
 
     # Since the dict was unordered this whole time, we need to sort all
     # three of these together
-    hs, fs, ds, amps, cs, dffs, sps = (list(t) for t in zip(*sorted(zip(hs, fs, ds, amps, cs, dffs, sps))))
+    hs, fs, ds, amps, cs, dffs, sps, snrs = (list(t) for t in zip(*sorted(zip(hs, fs, ds, amps, cs, dffs, sps, snrs))))
     r['Bias field (Oe)'] = hs
     r['Precessional frequency (GHz)'] = fs
     r['Chi square'] = cs
     r['delta f / f'] = dffs
     r['spectral peak'] = sps
+    r['SNR'] = snrs
 
     # The damping values may be negative. This is because the absolute value is
     # used in the fit to remove negative guesses. We take care of that here.
@@ -101,7 +104,11 @@ def characterize_fits(analysis):
 
     print('Here\'s what\'s going into the Ms & Hk fit:')
     print(omegas)
-    bestp, bestcov = scipy.optimize.curve_fit(precession, hsi_msfit, omegas, p0=bestp)
+    try:
+        bestp, bestcov = scipy.optimize.curve_fit(precession, hsi_msfit, omegas, p0=bestp)
+    except:
+        print('Could not characterize Ms and Hk.')
+        bestp, bestcov = [1,1,1], []
     #bestp, _ = fit.minimize_lorentz(precession, hsi_msfit, omegas, bestp, sigma=0.1E9)
     print(bestp)
     bestfit = precession(hsi_msfit, *bestp)

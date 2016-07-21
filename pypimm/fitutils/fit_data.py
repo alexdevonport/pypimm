@@ -67,7 +67,9 @@ def fit_data(analysis):
     for name, signal in signals.items():
         r[name] = {}
         timebase = analysis.get_timebase()
-        timebase, signal = fit.preprocess(timebase, signal, configs)
+        signal_unf = signal
+        timebase, signal, timebase_unf, signal_unf, signal_raw = fit.preprocess(timebase, signal, configs)
+
         fs = 1 / (timebase[1] - timebase[0])
         nstdev = int(fs * tstdev)
         sigerr = np.std(signal[-nstdev:])
@@ -130,10 +132,11 @@ def fit_data(analysis):
         r[name]['time delay'] = bestp[5]
         r[name]['DC offset'] = bestp[6]
         r[name]['chi square'] = c2r
+        r[name]['best fit SNR'] = fit.snr(signal_unf, bestfit)
 
         print('    {:20s}'.format(name), end=' '*2)
         for pk in bestp:
-            print('{:6.2f}'.format(pk), end=' '*2)
+            print('{:<9.4g}'.format(pk), end=' '*2)
         print('')
 
         chisq = np.sum(np.multiply(signal - bestfit, signal - bestfit))
@@ -143,7 +146,7 @@ def fit_data(analysis):
         plt.clf()
         fig = plt.figure()
         ax = fig.add_subplot(111)
-        plt.plot(timebase, signal, 'b.', label='data')
+        plt.plot(timebase, signal_unf, 'b.', label='data')
         plt.plot(timebase, bestfit, 'g', label='fit')
         paramstr1 = r'r$^2$ = ' + "{0:.3f}\n".format(r2)
         paramstr2 = r'$\chi^2_\nu$ = ' + "{0:3.3f}".format(c2r)
