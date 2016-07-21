@@ -1,7 +1,24 @@
 import csv
 import re
+import pandas as pd
 from collections import OrderedDict
 
+def load_data(analysis, filepath):
+    timebase_key = 'time(s)'
+    r = pd.read_csv(filepath, sep='\t')
+    signal_header = re.compile(r'.*signal.*')
+    signals = OrderedDict()
+    for key in r.keys():
+        if signal_header.match(key):
+            key_nospace = key.replace(' ', '-')
+            signals[key_nospace] = r[key]
+    # That's all the signals in one dict; we'll add that to the analyis object
+    analysis.set_raw_data(signals)
+    # add timebase as well
+    analysis.set_timebase(r[timebase_key])
+    return None
+
+"""
 def load_data(analysis, filepath):
     '''
     This function loads the data from a PIMM signal sweep into a data
@@ -51,3 +68,4 @@ def load_data(analysis, filepath):
     analysis.set_timebase(r[timebase_key])
 
     return None
+"""

@@ -1,5 +1,6 @@
 import math
-
+import statsmodels.api as sm
+import scipy.signal
 import numpy as np
 
 from fitutils import bandlimit
@@ -13,45 +14,8 @@ def preprocess(timebase, signal, configs):
     :param signal:
     :return:
     """
-
-    # pre-process data for fitting.
-    # The data must be filtered to
-    # remove noise. Since we aren't real-time, we may as well band-limit
-    # via FFT
-
-    ts = (timebase[1] - timebase[0])  # sampling frequency
-    fs = 1 / ts
-    bw = 1E9 * configs.getfloat('preprocess', 'bandlimit')
-    signal = bandlimit(signal, fs, bw)
-
-    # skip some data. set data[0] to be the first maximum after the skip, so that the
-    # signal of interest resembles a damped cosine. Chose damped cosine over damped sine
-    # for ease of normalization.
-    # In this stage, we also center the signal about zero (remove the mean, that is).
     timebase = np.array(timebase)
-    # arbitrary skip
-    # get values from the config file
-    #configfp = os.path.join(configdir, 'pypimmconfig.txt')
-    tskip = 1E-9 * configs.getfloat('preprocess', 'initial data skip')
-    ttrunc = 1E-9 * configs.getfloat('preprocess', 'data fit length')
 
-    nskip = math.ceil(tskip / ts)
-    ntrunc = min(math.ceil(ttrunc / ts), len(signal))  # we don't want the chosen length to be longer than the signal!
-    timebase = timebase[nskip:] - timebase[nskip]
-    skipmean = np.mean(signal[nskip:])
-    signal = signal[nskip:] - skipmean
-    # next zero crossing
-    if configs.getboolean('preprocess', 'use global max'):
-        pk = globalmax(signal)
-    else:
-        pk = localmax(signal)
-    peakmean = np.mean(signal[pk:])
-    timebase = timebase[pk:] - timebase[pk]
-    signal = signal[pk:] - peakmean
-    # truncate the signal
-    timebase = timebase[:ntrunc]
-    signal = signal[:ntrunc]
-    signal = signal - np.mean(signal)
     # convert the signal to mV
     # Originally, we'd normalize the signal to 1, but I decided
     # I'd rather let the fit take care of amplitude, as I might want
@@ -62,8 +26,56 @@ def preprocess(timebase, signal, configs):
     # originally, use of s and ns for the timbase was inconsistent in this program.
     # It's ns all the way after this.
     timebase = timebase * 1E9
+    ts = (timebase[1] - timebase[0])  # sampling frequency
+    fs = 1 / ts
+
+    # pre-process data for fitting.
+    # The data must be filtered to
+    # remove noise. Since we aren't real-time, we may as well band-limit
+    # via FFT
+
+    bw = configs.getfloat('preprocess', 'bandlimit')
+    signal = bandlimit(signal, fs, bw)
+    #signal = scipy.signal.savgol_filter(signal, 21, 3)
+    #signal = sm.nonparametric.lowess(signal, timebase, frac=0.02)[:,1]
+
+    # skip some data. set data[0] to be the first maximum after the skip, so that the
+    # signal of interest resembles a damped cosine. Chose damped cosine over damped sine
+    # for ease of normalization.
+    # In this stage, we also center the signal about zero (remove the mean, that is).
+
+    # arbitrary skip
+    # get values from the config file
+    #configfp = os.path.join(configdir, 'pypimmconfig.txt')
+    tskip = configs.getfloat('preprocess', 'initial data skip')
+    ttrunc = configs.getfloat('preprocess', 'data fit length')
+    tzero = configs.getfloat('preprocess', 'zero mean length')
+    nzero = math.ceil(tzero / ts)
+
+    nskip = math.ceil(tskip / ts)
+    ntrunc = min(math.ceil(ttrunc / ts), len(signal))  # we don't want the chosen length to be longer than the signal!
+    signal = signal[nskip:]
+    timebase = timebase[nskip:] - timebase[nskip]
+    # next zero crossing
+    #if configs.getboolean('preprocess', 'use global max'):
+    #    pk = globalmax(signal)
+    #else:
+    #    pk = localmax(signal)
+    #signal = signal[pk:]
+    #timebase = timebase[pk:] - timebase[pk]
+
+    # truncate the signal
+    timebase = timebase[:ntrunc]
+    signal = signal[:ntrunc]
+
+    # DC shift the signal so that the end data is centered about zero
+    dcs = np.mean(signal[-nzero:])
+    signal -= dcs
 
     return (timebase, signal)
+
+
+
 
 def localmax(y):
     """

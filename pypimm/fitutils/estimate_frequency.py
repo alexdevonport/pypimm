@@ -47,5 +47,6 @@ def estimate_frequency(timebase, signal, resolution=0.01, name=None):
     # since we're looking at real data, we'll only consider the first half of the spectrum
     maxind = (pspect[:int(len(pspect)/2)]).argmax()
     maxf = fs / npts * maxind
+    #print('FREQUENCY ESTIMATE: {}'.format(maxf))
     # return frequency bin corresponding to the max index
     return maxf

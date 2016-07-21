@@ -67,7 +67,6 @@ def shotgun_lsq(x, y, fun, p0, spread, sigma=1, dist=None, maxiter = 1000):
             bestp = newp0
     return bestp
 
-
 def ndnormal(mus, sigmas):
     """
     Creates a list of normally distributed random numbers, with each item having

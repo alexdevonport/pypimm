@@ -1,32 +1,24 @@
 __author__ = 'alex'
 from math import isnan
 import logging
-
+import fitutils as fit
 import scipy.optimize
 import numpy as np
 
 
 def shotgun_lsq(x, y, fun, p0, spread, sigma=1, maxiter = 1000):
-    mse = 1
-    bestmse = 2
-    m = len(p0)
     bestp = p0
-    yrange = np.max(y) - np.min(y)
     spread = np.array(spread)
+    bestrc2 = sos(y - fun(x, *p0)) / sigma
     for k in range(maxiter):
         newp0 = ndnormal(p0, spread)
-        try:
-            bestfit = fun(x, *newp0)
-            mse = sos(y - bestfit) / sigma
-        except ValueError:
-            mse = 1E9
-        if(isnan(mse)):
-            mse = 1E9
-        if mse < bestmse:
-            bestmse = mse
+        rc2 = sos(y-fun(x,*newp0)) / sigma
+        if rc2 < bestrc2:
+            bestrc2 = rc2
             bestp = newp0
-        if k % 250 == 0:
-            spread = np.multiply(spread, 1.25)
+        if k % 500 == 0:
+            spread = np.multiply(spread, 1.0)
+    #print('shotgunned a reduced chi^2 of {:f}.'.format(bestrc2))
     return bestp
 
 def ndnormal(mus, sigmas):

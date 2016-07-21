@@ -1,12 +1,18 @@
 [preprocess]
-initial data skip = 0.0 ; nanoseconds of data to skip before finding peak
-data fit length = 5.0   ; nanoseconds of data to use for fit
-bandlimit = 12          ; bandwidth of Gaussian preprocess filter (GHz)
-use global max = yes    ; Start fit at highest overall peak after skip, or the nearest one?
+initial data skip = 0.9 # nanoseconds of data to skip before finding peak
+data fit length = 5   # nanoseconds of data to use for fit
+bandlimit = 4         # bandwidth of Gaussian preprocess filter (GHz)
+use global max = no    # Start fit at highest overall peak after skip, or the nearest one?
+zero mean length = 1.0
 
 [fit-params]
-signal fit r squared threshold = 0.875  ; Signal fits with r^2 below this value aren't used
-                                        ; to fit Ms and Hk
+stdev measurement length = 2 # nanoseconds of data to use to calculate signal noise
+max SNR = 5.0
+
+reduced chi squared lower thresh = 0.6  # Signal fits with reduced chi^2 below this value aren't used
+reduced chi squared upper thresh = 9.0   # Signal fits with reduced chi^2 above this value aren't used
+
+signal fit r squared threshold = 0.825  # to fit ms and hk
 
 # parameter list is as follows:
 # fmr ampl, fmr frequency, fmr damping, interference ampl, interference damping, time delay
@@ -17,7 +23,7 @@ grid stops   = [10.0,  3.5, 5.0, 10.0,  1.0, 0.25]
 grid lengths = [5,     10,  5,   5,     3,   3]
 
 use shotgun-lsq = yes  # if you said yes to both, we'll use the better of the two guesses
-shotgun-lsq spreads = 2.0, 0.8, 6, 0.8, 4, 0.3
+shotgun-lsq spreads = 10.0, 0.001, 1, 0.4, 2, 0.3, 0.1
 
 [characterize]
-hk field fit thresh = 20
+hk field fit thresh = 25

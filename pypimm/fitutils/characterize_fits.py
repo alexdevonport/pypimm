@@ -35,6 +35,7 @@ def characterize_fits(analysis):
     ds = []
     cs = []
     dffs = []
+    sps = []
 
     # Some of the calculated values in fs and ds may be bad, if we couldn't fit the
     # signal. If that's the case, those signals will have been flagged. We'll get
@@ -51,15 +52,16 @@ def characterize_fits(analysis):
                 amps.append(fits[key]['amplitude'])
                 cs.append(fits[key]['chi square'])
                 dffs.append(fits[key]['delta f / f'])
-
+                sps.append(fits[key]['spectral peak'])
 
     # Since the dict was unordered this whole time, we need to sort all
     # three of these together
-    hs, fs, ds, amps, cs, dffs = (list(t) for t in zip(*sorted(zip(hs, fs, ds, amps, cs, dffs))))
+    hs, fs, ds, amps, cs, dffs, sps = (list(t) for t in zip(*sorted(zip(hs, fs, ds, amps, cs, dffs, sps))))
     r['Bias field (Oe)'] = hs
     r['Precessional frequency (GHz)'] = fs
     r['Chi square'] = cs
     r['delta f / f'] = dffs
+    r['spectral peak'] = sps
 
     # The damping values may be negative. This is because the absolute value is
     # used in the fit to remove negative guesses. We take care of that here.
@@ -73,25 +75,35 @@ def characterize_fits(analysis):
     hkthresh = configs.getfloat('characterize', 'hk field fit thresh')
     hs_msfit = []
     fs_msfit = []
-    for h, f in zip(hs, fs):
+    sps_msfit = []
+    for h, f, s in zip(hs, fs, sps):
         if abs(h) > hkthresh:
             hs_msfit.append(h)
             fs_msfit.append(f)
+            sps_msfit.append(s)
 
     hsi = 1000 / (4 * pi) * np.array(hs)  # H, in SI units (A/M)
     hsi_msfit = 1000 / (4 * pi) * np.array(hs_msfit)  # H, in SI units (A/M)
     omegas = 2 * pi * np.array(fs_msfit) * 1E9
+    omegas_sps = 2 * pi * np.array(sps) * 1E9
 
-    hkguess = 3 * 1000 / (4 * pi)
+    hkguess = 10 * 1000 / (4 * pi)
     msguess = 800 * 1E3
     hcpguess = 1 * 1000 / (4 * pi)
+
+    #uncomment these lines to use spectral peaks for mhsk estimate
+    #omegas = np.array(sps_msfit) * 2 * pi * 1E9
 
     # fpopt, fpcov = sp.optimize.curve_fit(precession, hsi_msfit, omegas, p0=[msguess, hkguess, hcpguess])
     bestp = fit.shotgun_lsq(hsi_msfit, omegas, precession,
                             p0=[msguess, hkguess, hcpguess],
-                            spread=[100 * 1E3, 5 * 1000 / (4 * pi), 0.5 * 1000 / (4 * pi)], sigma=1, maxiter=1000)
+                            spread=[100 * 1E3, 2 * 1000 / (4 * pi), 0.5 * 1000 / (4 * pi)], sigma=1, maxiter=10000)
 
+    print('Here\'s what\'s going into the Ms & Hk fit:')
+    print(omegas)
     bestp, bestcov = scipy.optimize.curve_fit(precession, hsi_msfit, omegas, p0=bestp)
+    #bestp, _ = fit.minimize_lorentz(precession, hsi_msfit, omegas, bestp, sigma=0.1E9)
+    print(bestp)
     bestfit = precession(hsi_msfit, *bestp)
     ssres = sos(omegas - bestfit)  # sum of squares of the residuals
     sigmean = np.mean(omegas)
@@ -129,7 +141,7 @@ def characterize_fits(analysis):
     r['Ms (emu/cm^3)'] = mscgs
     r['Hk (Oe)'] = hkcgs
 
-    # TODO: make a function to cleann up plotting section a little
+    # TODO: make a function to clean up plotting section a little
 
     # prepare damping vs field plot
     gmr = 28 * 2 * pi  # Gyromagnetic ratio, GHz/T

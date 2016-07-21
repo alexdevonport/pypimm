@@ -32,12 +32,13 @@ def estimate_damping(timebase, signal, fguess, name=None):
     # g is the damping we're after. We can now approximate the
     # damping using a least-squares fit.
     try:
-        popt, pcov = curve_fit(expdamp, timebase[:int(len(timebase)/2)], env[:int(len(timebase)/2)], p0=[-0.2, 1.0, 0.0])
+        popt, pcov = curve_fit(expdamp, timebase[30:int(len(timebase)/2)], env[30:int(len(timebase)/2)], p0=[-0.2, 1.0, 0.0])
         bestfit = expdamp(timebase, popt[0], popt[1], popt[2])
         damping_estimate = -popt[0]
-    except RuntimeError:
+    except:
         bestfit = expdamp(timebase, -0.2, 1.0, 0.0)
         damping_estimate = 0.2
+
     env = env / env[0]
     plt.clf()
     plt.plot(timebase, env, timebase, bestfit)

@@ -8,6 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
 import scipy.optimize
+import warnings
 
 from ProgBar import ProgBar
 import fitutils as fit
@@ -39,12 +40,18 @@ def fit_data(analysis):
                      damped cosine that best fits the signal.
     '''
 
+
     # First order of business, get relevant data from the analysis object
     signals = analysis.get_raw_data()
     configs = analysis.get_configs()
     setname = analysis.get_name()
-    #r2thresh = analysis.get_configs(('fit-params', 'signal fit r squared threshold'))
+    chi2lower = configs.getfloat('fit-params', 'reduced chi squared lower thresh')
+    chi2upper = configs.getfloat('fit-params', 'reduced chi squared upper thresh')
     r2thresh = configs.getfloat('fit-params', 'signal fit r squared threshold')
+    #sigerr = configs.getfloat('fit-params', 'estimated signal deviation')
+    tstdev = configs.getfloat('fit-params', 'stdev measurement length')
+    maxsnr = configs.getfloat('fit-params', 'max SNR')
+
     # Perform the signal fit procedure for every signal in the analysis
     # object's raw data
     r = {}  # temporary storage for fit results
@@ -62,15 +69,20 @@ def fit_data(analysis):
         timebase = analysis.get_timebase()
         timebase, signal = fit.preprocess(timebase, signal, configs)
         fs = 1 / (timebase[1] - timebase[0])
+        nstdev = int(fs * tstdev)
+        sigerr = np.std(signal[-nstdev:])
+
         # make amplitude estimate
         amplitude_est = np.max(signal[:25])
         # make frequency estimate
         frequency_est = fit.estimate_frequency(timebase, signal, name=name)
+        r[name]['spectral peak'] = frequency_est
         # delta f / f
         r[name]['delta f / f'] = fit.spectrum_fmhw(signal, fs, name=name)
         # make damping estimate
         damping_est = fit.estimate_damping(timebase, signal, frequency_est, name=name)
         # With those estimates ready, we can try fitting the signal
+        pguess = [amplitude_est, frequency_est, 1/damping_est, 0.1, 5, 0.0, 0.0]
 
         if configs.getboolean('fit-params', 'use grid-lsq'):
             gstarts = str_to_floats(configs.get('fit-params', 'grid starts'))
@@ -81,32 +93,51 @@ def fit_data(analysis):
         if configs.getboolean('fit-params', 'use shotgun-lsq'):
             spreads = str_to_floats(configs.get('fit-params', 'shotgun-lsq spreads'))
             bestp = fit.shotgun_lsq(timebase, signal, dsinplus_sp,
-                                       p0=[amplitude_est, frequency_est, 1/damping_est, 0.3, 1, 0.1],
+                                       p0=pguess,
                                        spread=spreads,
-                                       sigma=0.1,
-                                       maxiter=2000)
-        bestp, bestcov = scipy.optimize.curve_fit(dsinplus_sp, timebase, signal, p0=bestp)
+                                       sigma=sigerr,
+                                       maxiter=10000)
+        try:
+            #bestp, c2r = fit.minimize_reduced_chi2(dsinplus_sp, timebase, signal, bestp, sigma=sigerr)
+            #bestp, c2r = fit.minimize_absolute(dsinplus_sp, timebase, signal, bestp, sigma=sigerr)
+            #bestp, c2r = fit.minimize_lorentz(dsinplus_sp, timebase, signal, bestp, sigma=sigerr)
+            worstp = [1, 1, 1, 1, 1, 1, 1]
+            bestp, c2r = fit.basin_lsq(dsinplus_sp, timebase, signal, bestp, sigma=sigerr)
+            warnings.filterwarnings('ignore')
+            bestp, bestcov = scipy.optimize.curve_fit(dsinplus_sp, timebase, signal,
+                                                      p0=worstp)
+            warnings.resetwarnings()
+        except RuntimeError:
+            logging.warning('FITTING FAILED FOR {}'.format(name))
+            bestp = pguess
         bestfit = dsinplus_sp(timebase, *bestp)
-        ssres = sos(signal - bestfit)  # sum of squares of the residuals
-        sigmean = np.mean(signal)
-        sstot = sos(signal - sigmean)    # total sum of squares
-        r2 = 1.0 - ssres / sstot
-        c2r = fit.redchi2(dsinplus_sp, timebase, signal, bestp, sigma=2.5E-3)
-        print('in {name}, r^2={rsq:3.2f}, reduced chi^2={rcsq:3f}'
-              .format(name=name, rsq=r2, rcsq=c2r))
-        #return bestp, bestcov, r
-        if r2 < r2thresh:
-            r[name]['use for fit'] = False
-            logging.warning('Not using ' + name + ' in final analysis. r^2: '+ str(r2))
-        else:
+        r2 = fit.nlcorr(dsinplus_sp, timebase, signal, bestp)
+        c2r = fit.redchi2(dsinplus_sp, timebase, signal, bestp, sigma=sigerr)
+
+        #confidence_limits = fit.conf_chi2(dsinplus_sp, timebase, signal, bestp, 2)
+        if r2thresh < r2 <= 1.0:
+        #if chi2lower < c2r < chi2upper and r2thresh < r2 <= 1.0:
             r[name]['use for fit'] = True
+        else:
+            r[name]['use for fit'] = False
+            logging.warning('Not using ' + name + ' in final analysis. chi^2: '+ str(c2r))
+        #bestp = worstp
         r[name]['frequency'] = bestp[1]
         r[name]['damping']   = bestp[2]
         r[name]['amplitude'] = bestp[0]
-        r[name]['chi square'] = r
+        r[name]['interference amplitude'] = bestp[3]
+        r[name]['interference damping'] = bestp[4]
+        r[name]['time delay'] = bestp[5]
+        r[name]['DC offset'] = bestp[6]
+        r[name]['chi square'] = c2r
+
+        print('    {:20s}'.format(name), end=' '*2)
+        for pk in bestp:
+            print('{:6.2f}'.format(pk), end=' '*2)
+        print('')
+
         chisq = np.sum(np.multiply(signal - bestfit, signal - bestfit))
         r[name]['chi square'] = chisq
-
         fit.error_analysis(timebase, signal, bestfit, name=name)
 
         plt.clf()
@@ -128,14 +159,14 @@ def fit_data(analysis):
         plt.clf()
         plt.close()
         del fig, ax
-        pb.update(1)
+        #pb.update(1)
 
     # All of the fits are in r, so we'll add that to the analysis object
     analysis.set_fits(r)
     return None
 
 
-def dsinplus_sp(x, p0, p1, p2, p3, p4, p5):
+def dsinplus_sp(x, p0, p1, p2, p3, p4, p5, p6):
     """
     Exactly the same as dsin, but with separate args because that's what Scipy's curve_fit takes.
     :param x:
@@ -143,11 +174,8 @@ def dsinplus_sp(x, p0, p1, p2, p3, p4, p5):
     :return:
     """
     x = np.array(x)
-    #y =   p0 * np.cos((x-p5)*2*pi*p1)*np.exp(-(x-p5)/abs(p2)) \
-    #    + p3 * np.exp(-(x-p5)/abs(p4))
-    y =   p0 * np.cos((x-p5)*2*pi*p1)*np.exp(-(x-p5)/abs(p2))
-    y[y == np.inf] = 0
-    y[y == np.nan] = 0
+    y =   p0 * np.cos(2*pi*p1*(x-p5)) * np.exp(-(x-p5)/abs(p2)) \
+        + p3 * np.exp(-(x-p5)/abs(p4))
     return y
 
 def str_to_floats(s):

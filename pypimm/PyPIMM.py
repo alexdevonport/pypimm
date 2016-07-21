@@ -9,6 +9,7 @@ from load_data import load_data
 from fitutils import fit_data, characterize_fits
 from generate_report import generate_report
 from get_config_value import get_config_value
+from user_input import user_input
 
 #logging.basicConfig(level=logging.DEBUG)
 logging.disable(logging.DEBUG)
@@ -36,6 +37,12 @@ if len(sys.argv) < 2:
 
 pypimmdir = os.path.dirname(os.path.abspath(__file__))
 
+#parse options
+if '--handpick' in sys.argv:
+    handpick = 'yes'
+else:
+    handpick = 'no'
+
 for filepath in sys.argv[1:]:
     analysis = PimmAnalysis()
     fpnoext = os.path.split(filepath)[1][:-4] # takes the path and returns just the file name
@@ -44,11 +51,14 @@ for filepath in sys.argv[1:]:
     analysis.set_name(fpnoext)
 
     # Get the signals ant timebase out of the data file and into the object
-    load_data(analysis, filepath)
-
+    try:
+        load_data(analysis, filepath)
+    except OSError:
+        continue
     # Get configuration values from the config file
     configfp = os.path.join(pypimmdir, 'pypimmconfig.txt')
     get_config_value(analysis, configfp)
+    analysis.set_configs('fit-params', 'hand pick values', handpick)
 
     # Make directories to store results in. It may be a good idea to
     # replace this with a function that accepts a 'directory structure'
@@ -68,6 +78,9 @@ for filepath in sys.argv[1:]:
 
     # for each signal, calculate fit parameters
     fit_data(analysis)
+
+    if handpick == 'yes':
+        user_input(analysis)
 
     # with all signal fits done, calculate material properties
     characterize_fits(analysis)
