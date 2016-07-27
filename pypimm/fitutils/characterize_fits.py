@@ -61,6 +61,7 @@ def characterize_fits(analysis):
     hs, fs, ds, amps, cs, dffs, sps, snrs = (list(t) for t in zip(*sorted(zip(hs, fs, ds, amps, cs, dffs, sps, snrs))))
     r['Bias field (Oe)'] = hs
     r['Precessional frequency (GHz)'] = fs
+    r['amplitude'] = amps
     r['Chi square'] = cs
     r['delta f / f'] = dffs
     r['spectral peak'] = sps
@@ -97,19 +98,27 @@ def characterize_fits(analysis):
     #uncomment these lines to use spectral peaks for mhsk estimate
     #omegas = np.array(sps_msfit) * 2 * pi * 1E9
 
-    # fpopt, fpcov = sp.optimize.curve_fit(precession, hsi_msfit, omegas, p0=[msguess, hkguess, hcpguess])
-    bestp = fit.shotgun_lsq(hsi_msfit, omegas, precession,
-                            p0=[msguess, hkguess, hcpguess],
-                            spread=[100 * 1E3, 2 * 1000 / (4 * pi), 0.5 * 1000 / (4 * pi)], sigma=1, maxiter=10000)
+#    fitbounds = [
+#        (0,2000*1E3),
+#        (0, 75 * 1000 / (4 * pi)),
+#        (-10 * 1000 / (4 * pi), 10 * 1000 / (4 * pi))
+#    ]
+    fitbounds = ([0, 0, -10 * 1000/(4*pi)],
+                 [2000*1E3, 75*1000/(4*pi), 10*1000/(4*pi)])
 
-    print('Here\'s what\'s going into the Ms & Hk fit:')
-    print(omegas)
-    try:
-        bestp, bestcov = scipy.optimize.curve_fit(precession, hsi_msfit, omegas, p0=bestp)
-    except:
-        print('Could not characterize Ms and Hk.')
-        bestp, bestcov = [1,1,1], []
-    #bestp, _ = fit.minimize_lorentz(precession, hsi_msfit, omegas, bestp, sigma=0.1E9)
+    # fpopt, fpcov = sp.optimize.curve_fit(precession, hsi_msfit, omegas, p0=[msguess, hkguess, hcpguess])
+    #bestp = fit.shotgun_lsq(hsi_msfit, omegas, precession,
+    #                        p0=[msguess, hkguess, hcpguess],
+    #                        spread=[100 * 1E3, 2 * 1000 / (4 * pi), 0.5 * 1000 / (4 * pi)], sigma=1, maxiter=10000)
+
+    #try:
+    bestp, bestcov = scipy.optimize.curve_fit(precession, hsi_msfit,
+                                              omegas, p0=[msguess, hkguess, hcpguess],
+                                              bounds=fitbounds)
+#except:
+    #    print('Could not characterize Ms and Hk.')
+    #    bestp, bestcov = [1,1,1], []
+    bestp, _ = fit.minimize_lorentz(precession, hsi_msfit, omegas, bestp, sigma=0.1E9)
     print(bestp)
     bestfit = precession(hsi_msfit, *bestp)
     ssres = sos(omegas - bestfit)  # sum of squares of the residuals

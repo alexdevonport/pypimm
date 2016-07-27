@@ -1,5 +1,8 @@
 import numpy as np
+import scipy.stats
 import scipy.optimize
+import random
+import matplotlib.pyplot as plt
 __author__ = 'alex'
 
 def gof(fun, x, y, p):
@@ -43,11 +46,20 @@ def minimize_absolute(fun, x, y, p0, sigma=1.0):
     print(popt)
     return popt, bestchi2
 
-def basin_lsq(fun, x, y, p0, sigma=1.0):
+def basin_lsq(fun, x, y, p0, sigma=1.0, bounds=None):
     res = lambda p: np.sum(np.power((y - fun(x, *p)),2))
-    popt = scipy.optimize.basinhopping(res, p0, niter=150).x
+    popt = scipy.optimize.basinhopping(res, p0, niter=50,
+        minimizer_kwargs={'bounds':bounds}).x
     bestchi2 = chi2(fun, x, y, popt, sigma=sigma)
     return popt, bestchi2
+
+def de_lsq(fun, x, y, bounds, sigma=1.0):
+    res = lambda p: np.sum(np.power((y - fun(x, *p)),2))
+    popt = scipy.optimize.differential_evolution(res, bounds,
+        maxiter=10000).x
+    bestchi2 = chi2(fun, x, y, popt, sigma=sigma)
+    return popt, bestchi2
+
 
 def minimize_lorentz(fun, x, y, p0, sigma=1.0):
     def res(p):
@@ -85,3 +97,16 @@ def nlcorr(fun, x, y, p, sigma=1.0):
     sstot = np.sum(np.power(y - sigmean, 2))    # total sum of squares
     r2 = 1.0 - ssres / sstot
     return r2
+
+def noise_stdev(x):
+    nx = np.size(x)
+    t = np.linspace(0, 1, nx)
+    slope, intercept, r_value, p_value, std_err = scipy.stats.linregress(t,x)
+    xcor = x - (slope*t + intercept)
+    plt.clf()
+    plt.plot(t, xcor)
+    name = random.randint(0, 10000000)
+    plt.title('noise sigma data')
+    plt.savefig('./Error/{:d}_noise.png'.format(name))
+    plt.clf()
+    return np.std(xcor)

@@ -10,6 +10,8 @@ from fitutils import fit_data, characterize_fits
 from generate_report import generate_report
 from get_config_value import get_config_value
 from user_input import user_input
+from compile_results import compile_results
+
 
 #logging.basicConfig(level=logging.DEBUG)
 logging.disable(logging.DEBUG)
@@ -43,8 +45,12 @@ if '--handpick' in sys.argv:
 else:
     handpick = 'no'
 
+allres = []  # results of all analyses, to put in one file
 for filepath in sys.argv[1:]:
     analysis = PimmAnalysis()
+    configfp = os.path.join(pypimmdir, 'pypimmconfig.txt')
+    get_config_value(analysis, configfp)
+    analysis.set_configs('fit-params', 'hand pick values', handpick)
     fpnoext = os.path.split(filepath)[1][:-4] # takes the path and returns just the file name
     fpnoext = fpnoext.replace(' ','')
     fpnoext = fpnoext.replace('_','-')
@@ -55,10 +61,8 @@ for filepath in sys.argv[1:]:
         load_data(analysis, filepath)
     except OSError:
         continue
+
     # Get configuration values from the config file
-    configfp = os.path.join(pypimmdir, 'pypimmconfig.txt')
-    get_config_value(analysis, configfp)
-    analysis.set_configs('fit-params', 'hand pick values', handpick)
 
     # Make directories to store results in. It may be a good idea to
     # replace this with a function that accepts a 'directory structure'
@@ -84,6 +88,8 @@ for filepath in sys.argv[1:]:
 
     # with all signal fits done, calculate material properties
     characterize_fits(analysis)
+    allres.append({'name':fpnoext, 'results':analysis.get_results()})
+
     # TODO: compile results from each previous stage into a report file
     generate_report(analysis, pypimmdir)
 
@@ -92,6 +98,6 @@ for filepath in sys.argv[1:]:
 
 # TODO: Now that ALL analysis is over, create a 'highlights' document showing
 # all frequency and damping plots
-
+compile_results(allres)
 # Now that everything is done, report to the user and quit.
 print('Analysis complete.')

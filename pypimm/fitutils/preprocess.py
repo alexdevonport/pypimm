@@ -38,8 +38,8 @@ def preprocess(timebase, signal, configs):
     bw = configs.getfloat('preprocess', 'bandlimit')
     unf = signal
     raw = signal
-    signal = bandlimit(signal, fs, bw)
-    #signal = scipy.signal.savgol_filter(signal, 21, 3)
+    #signal = bandlimit(signal, fs, bw)
+    signal = scipy.signal.savgol_filter(signal, 21, 3)
     #signal = sm.nonparametric.lowess(signal, timebase, frac=0.02)[:,1]
 
     # skip some data. set data[0] to be the first maximum after the skip, so that the
@@ -62,12 +62,13 @@ def preprocess(timebase, signal, configs):
     timebase = timebase[nskip:] - timebase[nskip]
     tunf = tunf - tunf[nskip]
     # next zero crossing
-    #if configs.getboolean('preprocess', 'use global max'):
-    #    pk = globalmax(signal)
-    #else:
-    #    pk = localmax(signal)
-    #signal = signal[pk:]
-    #timebase = timebase[pk:] - timebase[pk]
+    if configs.getboolean('preprocess', 'use global max'):
+        pk = globalmax(np.abs(signal))
+    else:
+        pk = localmax(np.abs(signal))
+    signal = signal[pk:]
+    unf = unf[pk:]
+    timebase = timebase[pk:] - timebase[pk]
 
     # truncate the signal
     timebase = timebase[:ntrunc]

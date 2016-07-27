@@ -1,11 +1,13 @@
 __author__ = 'alex'
+import json
 
 class PimmAnalysis():
-    def __init__(self, name=None, timebase=None, raw_data=None,
+    def __init__(self, name=None, timebase=None, raw_data=None, metadata=None,
                  fits=None, results=None, progress=None, configs=None):
         self.name = name
         self.timebase = timebase
         self.raw_data = raw_data
+        self.metadata = metadata
         self.fits = fits
         self.results = results
         self.progress = progress
@@ -31,6 +33,16 @@ class PimmAnalysis():
 
     def get_raw_data(self):
         return self.raw_data
+
+    def set_metadata(self, newmetedata):
+        self.metadata = newmetedata
+        return None
+
+    def get_metadata(self):
+        return self.metadata
+
+    def print_metadata(self):
+        print(json.dumps(self.metadata, indent=4))
 
     def set_fits(self, newfits):
         self.fits = newfits

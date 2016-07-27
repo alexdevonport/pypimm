@@ -67,13 +67,15 @@ def fit_data(analysis):
     for name, signal in signals.items():
         r[name] = {}
         timebase = analysis.get_timebase()
-        signal_unf = signal
-        timebase, signal, timebase_unf, signal_unf, signal_raw = fit.preprocess(timebase, signal, configs)
 
+        # preprocess data
+        timebase, signal, timebase_unf, signal_unf, signal_raw = fit.preprocess(timebase, signal, configs)
         fs = 1 / (timebase[1] - timebase[0])
         nstdev = int(fs * tstdev)
-        sigerr = np.std(signal[-nstdev:])
-
+        #sigerr = np.std(signal_raw[-nstdev:])
+        noise_sample = signal_raw[-nstdev:]
+        sigerr = fit.noise_stdev(noise_sample)
+        r[name]['noise sigma (mV)'] = sigerr
         # make amplitude estimate
         amplitude_est = np.max(signal[:25])
         # make frequency estimate
@@ -86,39 +88,53 @@ def fit_data(analysis):
         # With those estimates ready, we can try fitting the signal
         pguess = [amplitude_est, frequency_est, 1/damping_est, 0.1, 5, 0.0, 0.0]
 
+        lbound=(-100, 0, 0, -1.5*amplitude_est, 0, -2, -2)
+        ubound=(100, 3.5, 5, 1.5*amplitude_est, 5, 2, 2)
+        zbounds = list(zip(lbound, ubound))
+
         if configs.getboolean('fit-params', 'use grid-lsq'):
             gstarts = str_to_floats(configs.get('fit-params', 'grid starts'))
             gstops = str_to_floats(configs.get('fit-params', 'grid stops'))
             glengths = str_to_floats(configs.get('fit-params', 'grid lengths'))
-            gdims = zip(gstarts, gstops, glengths)
-            bestp = fit.grid_lsq(dsinplus_sp, timebase, signal, gdims)
+            gdims = list(zip(gstarts, gstops, glengths))
+            #bestp = fit.grid_lsq(dsinplus_sp, timebase, signal, gdims)
         if configs.getboolean('fit-params', 'use shotgun-lsq'):
             spreads = str_to_floats(configs.get('fit-params', 'shotgun-lsq spreads'))
+            bestp = pguess
             bestp = fit.shotgun_lsq(timebase, signal, dsinplus_sp,
                                        p0=pguess,
                                        spread=spreads,
                                        sigma=sigerr,
-                                       maxiter=10000)
+                                       maxiter=1000)
         try:
             #bestp, c2r = fit.minimize_reduced_chi2(dsinplus_sp, timebase, signal, bestp, sigma=sigerr)
             #bestp, c2r = fit.minimize_absolute(dsinplus_sp, timebase, signal, bestp, sigma=sigerr)
             #bestp, c2r = fit.minimize_lorentz(dsinplus_sp, timebase, signal, bestp, sigma=sigerr)
             worstp = [1, 1, 1, 1, 1, 1, 1]
-            bestp, c2r = fit.basin_lsq(dsinplus_sp, timebase, signal, bestp, sigma=sigerr)
+            debounds = [(-1.5*amplitude_est, 1.5*amplitude_est),
+                        (0.9*frequency_est, 1.1*frequency_est),
+                        (0, 5),
+                        (-1.5*amplitude_est, 1.5*amplitude_est),
+                        (0, 5),
+                        (-1, 1),
+                        (0, 1)]
+            #bestp, c2r = fit.de_lsq(dsinplus_sp, timebase, signal, debounds, sigma=sigerr)
+            #bestp, c2r = fit.basin_lsq(dsinplus_sp, timebase, signal_unf, bestp, sigma=sigerr,
+            #                           bounds=zbounds)
             warnings.filterwarnings('ignore')
-            bestp, bestcov = scipy.optimize.curve_fit(dsinplus_sp, timebase, signal,
-                                                      p0=worstp)
+            bestp, bestcov = scipy.optimize.curve_fit(dsinplus_sp, timebase, signal_unf,
+                                                      p0=bestp)
             warnings.resetwarnings()
         except RuntimeError:
             logging.warning('FITTING FAILED FOR {}'.format(name))
             bestp = pguess
         bestfit = dsinplus_sp(timebase, *bestp)
-        r2 = fit.nlcorr(dsinplus_sp, timebase, signal, bestp)
-        c2r = fit.redchi2(dsinplus_sp, timebase, signal, bestp, sigma=sigerr)
+        r2 = fit.nlcorr(dsinplus_sp, timebase, signal_unf, bestp)
+        c2r = fit.redchi2(dsinplus_sp, timebase, signal_unf, bestp, sigma=sigerr)
 
         #confidence_limits = fit.conf_chi2(dsinplus_sp, timebase, signal, bestp, 2)
-        if r2thresh < r2 <= 1.0:
-        #if chi2lower < c2r < chi2upper and r2thresh < r2 <= 1.0:
+        #if r2thresh < r2 <= 1.0:
+        if chi2lower <= c2r <= chi2upper and r2thresh <= r2 <= 1.0:
             r[name]['use for fit'] = True
         else:
             r[name]['use for fit'] = False
@@ -147,6 +163,7 @@ def fit_data(analysis):
         fig = plt.figure()
         ax = fig.add_subplot(111)
         plt.plot(timebase, signal_unf, 'b.', label='data')
+        plt.plot(timebase, signal, 'r--', label='smoothed data')
         plt.plot(timebase, bestfit, 'g', label='fit')
         paramstr1 = r'r$^2$ = ' + "{0:.3f}\n".format(r2)
         paramstr2 = r'$\chi^2_\nu$ = ' + "{0:3.3f}".format(c2r)
@@ -155,7 +172,7 @@ def fit_data(analysis):
             verticalalignment='center',
             transform = ax.transAxes)
         plt.xlabel('time (ns)')
-        plt.ylabel('signal (V)')
+        plt.ylabel('signal (mV)')
         plt.title(name+' best-fit curve')
         plt.legend()
         plt.savefig(r'./sigfits/'+name+'.png')
