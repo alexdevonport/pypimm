@@ -12,6 +12,7 @@ class PimmAnalysis():
         self.results = results
         self.progress = progress
         self.configs = configs
+        self.fields = None
 
     def set_name(self, newname):
         self.name = newname
@@ -26,6 +27,12 @@ class PimmAnalysis():
 
     def get_timebase(self):
         return self.timebase
+
+    def set_fields(self, newfields):
+        self.fields = newfields
+
+    def get_fields(self):
+        return self.fields
 
     def set_raw_data(self, newrawdata):
         self.raw_data = newrawdata

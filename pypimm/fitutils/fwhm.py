@@ -16,20 +16,13 @@ def spectrum_fmhw(signal, fs, name=None):
     hm = 0.5 * numpy.max(pspect)
     pspectmh = numpy.subtract(pspect,  hm)
     hmpts = zeros(flist, pspectmh)
-    hml, hmr = hmpts[-2],  hmpts[-1]
-    hmw = hmr - hml
+    try:
+        hml, hmr = hmpts[-2],  hmpts[-1]
+        hmw = hmr - hml
+    except IndexError:
+        hmw = numpy.inf
     maxf = numpy.argmax(pspect)
     dff = hmw / maxf  # delta f over f
-
-    plt.clf()
-    #plt.plot(flist[:nyq] , pspect[:nyq])
-    plt.plot(flist, pspect)
-    plt.plot([hml, hmr],[hm, hm], 'r')
-    plt.xlabel('Frequency (GHz)')
-    plt.ylabel('PSD (V$^2$ / GHz)')
-    plt.title(name + ' Spectrum')
-    fp = os.path.join('.','spectra', name + 'spectrum.png')
-    plt.savefig(fp)
 
     return dff
 

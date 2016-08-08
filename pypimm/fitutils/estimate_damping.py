@@ -1,5 +1,6 @@
 __author__ = 'alex'
 from scipy.optimize import curve_fit
+import scipy.stats
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -20,8 +21,9 @@ def estimate_damping(timebase, signal, fguess, name=None):
     # part. We can construct the analytic signal using a discrete Hilbert
     # transform.
     fs = 1 / (timebase[1] - timebase[0])
-
+    nfit = int(fs)
     env = abs(hilbert(signal))
+    lenv = np.log(env)
     #env=signal
     #env = bandlimit(env, fs, 2.5E9)
 
@@ -32,16 +34,18 @@ def estimate_damping(timebase, signal, fguess, name=None):
     # g is the damping we're after. We can now approximate the
     # damping using a least-squares fit.
     try:
-        popt, pcov = curve_fit(expdamp, timebase[30:int(len(timebase)/2)], env[30:int(len(timebase)/2)], p0=[-0.2, 1.0, 0.0])
-        bestfit = expdamp(timebase, popt[0], popt[1], popt[2])
-        damping_estimate = -popt[0]
+        slope, intercept, r_value, p_value, std_err = scipy.stats.linregress(timebase[:nfit],lenv[:nfit])
+        #popt, pcov = curve_fit(expdamp, timebase[30:int(len(timebase)/2)], env[30:int(len(timebase)/2)], p0=[-0.2, 1.0, 0.0])
+        bestfit = timebase * slope + intercept
+        #bestfit = expdamp(timebase, popt[0], popt[1], popt[2])
+        damping_estimate = slope
     except:
         bestfit = expdamp(timebase, -0.2, 1.0, 0.0)
         damping_estimate = 0.2
 
     env = env / env[0]
     plt.clf()
-    plt.plot(timebase, env, timebase, bestfit)
+    plt.plot(timebase, lenv, timebase, bestfit)
     plt.savefig(r'./envelopes/'+name+'_env.png')
     return damping_estimate
 

@@ -1,4 +1,5 @@
 __author__ = 'alex'
+import scipy.stats
 import matplotlib.pyplot as plt
 import os
 
@@ -25,10 +26,9 @@ def error_analysis(timebase, signal, fit, name):
     plt.title('Best Fit Residue for '+name)
     plt.savefig(os.path.join('.','Error','time-domain','residue-'+name+'-time.png'))
     plt.clf()
-    plt.hist(errsig, 100)
+    scipy.stats.probplot(errsig, plot=plt)
     plt.title('Best-fit residue histogram for '+name)
-    plt.savefig(os.path.join('.','Error','histogram','residue-'+name+'-hist.png'))
+    plt.savefig(os.path.join('.','Error','normal-plot','residue-'+name+'-normal.png'))
     plt.clf()
-
 
     return None

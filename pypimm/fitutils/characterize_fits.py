@@ -23,49 +23,34 @@ def characterize_fits(analysis):
     name = analysis.get_name()
     configs = analysis.get_configs()
 
+    #
+
     # placeholder for characterisation results
     r = OrderedDict()
 
     # get an ordered list of all bias fields
     # TODO: remove the neeed for this by using ordered dicts
     key_pattern = re.compile('([+-]?\d+\.?\d*)(.*)')
-    hs = []
-    amps = []
-    fs = []
-    ds = []
-    cs = []
-    dffs = []
-    sps = []
-    snrs = []
+    hs = get_subkey(fits, 'bias field')
+    amps, ampcs = get_subkey(fits, 'amplitude'), get_subkey(fits, 'amplitude interval')
+    fs, fcs = get_subkey(fits, 'frequency'), get_subkey(fits, 'frequency interval')
+    fsig = get_subkey(fits, 'frequency sigma')
+    ds, dcs = get_subkey(fits, 'damping'), get_subkey(fits, 'damping interval')
 
-    # Some of the calculated values in fs and ds may be bad, if we couldn't fit the
-    # signal. If that's the case, those signals will have been flagged. We'll get
-    # rid of them now.
-
+    """
     for key in fits.keys():
         mo = key_pattern.match(key)
         if not mo == None:
             if fits[key]['use for fit']:
                 h = float(mo.group(1))
                 hs.append(h)
-                fs.append(fits[key]['frequency'])
-                ds.append(fits[key]['damping'])
-                amps.append(fits[key]['amplitude'])
-                cs.append(fits[key]['chi square'])
-                dffs.append(fits[key]['delta f / f'])
-                sps.append(fits[key]['spectral peak'])
-                snrs.append(fits[key]['best fit SNR'])
-
-    # Since the dict was unordered this whole time, we need to sort all
-    # three of these together
-    hs, fs, ds, amps, cs, dffs, sps, snrs = (list(t) for t in zip(*sorted(zip(hs, fs, ds, amps, cs, dffs, sps, snrs))))
-    r['Bias field (Oe)'] = hs
-    r['Precessional frequency (GHz)'] = fs
-    r['amplitude'] = amps
-    r['Chi square'] = cs
-    r['delta f / f'] = dffs
-    r['spectral peak'] = sps
-    r['SNR'] = snrs
+                fs.append(fits[key]['frequency'][0])
+                fcs.append(fits[key]['frequency'][1])
+                ds.append(fits[key]['damping'][0])
+                dcs.append(fits[key]['damping'][1])
+                amps.append(fits[key]['amplitude'][0])
+                ampcs.append(fits[key]['amplitude'][1])
+    """
 
     # The damping values may be negative. This is because the absolute value is
     # used in the fit to remove negative guesses. We take care of that here.
@@ -74,53 +59,57 @@ def characterize_fits(analysis):
     fs = np.abs(fs)
 
     # Prepare H and f data for calculating Ms and Hk
-    # TODO: remove all frequency data points below a certain field, so that Hk gets
-    # TODO: fit correctly
     hkthresh = configs.getfloat('characterize', 'hk field fit thresh')
     hs_msfit = []
     fs_msfit = []
-    sps_msfit = []
-    for h, f, s in zip(hs, fs, sps):
-        if abs(h) > hkthresh:
+    fsig_msfit = []
+    fcs_msfit = []
+    for h, f, s, c in zip(hs, fs, fsig, fcs):
+        if abs(h) >= hkthresh:
             hs_msfit.append(h)
             fs_msfit.append(f)
-            sps_msfit.append(s)
+            fsig_msfit.append(s)
+            fcs_msfit.append(c)
 
-    hsi = 1000 / (4 * pi) * np.array(hs)  # H, in SI units (A/M)
     hsi_msfit = 1000 / (4 * pi) * np.array(hs_msfit)  # H, in SI units (A/M)
-    omegas = 2 * pi * np.array(fs_msfit) * 1E9
-    omegas_sps = 2 * pi * np.array(sps) * 1E9
-
+    omegas = 2 * pi * np.array(fs_msfit)
+    omega_sig = 2 * pi * np.array(fsig_msfit)
+    omegacs = 0.5 * 2 * pi * np.array(fcs_msfit)
     hkguess = 10 * 1000 / (4 * pi)
     msguess = 800 * 1E3
     hcpguess = 1 * 1000 / (4 * pi)
-
-    #uncomment these lines to use spectral peaks for mhsk estimate
-    #omegas = np.array(sps_msfit) * 2 * pi * 1E9
-
-#    fitbounds = [
-#        (0,2000*1E3),
-#        (0, 75 * 1000 / (4 * pi)),
-#        (-10 * 1000 / (4 * pi), 10 * 1000 / (4 * pi))
-#    ]
+    r['hs'] = hs
     fitbounds = ([0, 0, -10 * 1000/(4*pi)],
                  [2000*1E3, 75*1000/(4*pi), 10*1000/(4*pi)])
 
-    # fpopt, fpcov = sp.optimize.curve_fit(precession, hsi_msfit, omegas, p0=[msguess, hkguess, hcpguess])
-    #bestp = fit.shotgun_lsq(hsi_msfit, omegas, precession,
-    #                        p0=[msguess, hkguess, hcpguess],
-    #                        spread=[100 * 1E3, 2 * 1000 / (4 * pi), 0.5 * 1000 / (4 * pi)], sigma=1, maxiter=10000)
+    omega_sigz = []
+    omegacz = []
+    sigavg = np.median(omega_sig)
+    cavg = np.median(omegacs)
+    for sig, c in zip(omega_sig, omegacs):
+        if sig < 1E-8 or sig > 1E3:
+            print('conf1d FOUND A BAD CONFINT')
+            omega_sigz.append(sigavg)
+            omegacz.append(cavg)
+        else:
+            omega_sigz.append(sig)
+            omegacz.append(c)
 
-    #try:
     bestp, bestcov = scipy.optimize.curve_fit(precession, hsi_msfit,
                                               omegas, p0=[msguess, hkguess, hcpguess],
-                                              bounds=fitbounds)
-#except:
-    #    print('Could not characterize Ms and Hk.')
-    #    bestp, bestcov = [1,1,1], []
-    bestp, _ = fit.minimize_lorentz(precession, hsi_msfit, omegas, bestp, sigma=0.1E9)
-    print(bestp)
+                                              bounds=fitbounds, sigma=np.array(omega_sigz))
+
+    c2r = fit.redchi2(precession, hsi_msfit, omegas,
+                      bestp, sigma=omega_sig)
+
+    bestpc = fit.conf1d(bestp, bestcov, stdevs=2)
+    msconfint = 2 * bestpc[0][1] / 1000
+    hkconfint = 2 * bestpc[1][1] * 4 * pi / 1000
+    hcconfint = 2 * bestpc[2][1] * 4 * pi / 1000
+
     bestfit = precession(hsi_msfit, *bestp)
+    fit.error_analysis(hsi_msfit, hsi_msfit, bestfit, name='properties')
+
     ssres = sos(omegas - bestfit)  # sum of squares of the residuals
     sigmean = np.mean(omegas)
     sstot = sos(omegas - sigmean)  # total sum of squares
@@ -137,16 +126,23 @@ def characterize_fits(analysis):
     plt.clf()
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    plt.plot(hs_msfit, omegas, 'bo ', label='data')
-    plt.plot(hs_bestfit, omega_bestfit, label='fit')
+    plt.plot(hs_msfit, omegas/ (2*pi), 'bo ', label='data')
+
+    # TODO: get error bars working. Holy cow, they do not want to work.
+    plt.errorbar(hs_msfit, omegas/(2*pi), yerr=np.divide(omegacz, 2*pi), fmt='o')
+    plt.plot(hs_bestfit, omega_bestfit/(2*pi), label='fit')
     plt.legend()
     plt.xlabel('bias field (Oe)')
-    plt.ylabel('$\omega_p$ (rad/s)')
+    plt.ylabel('$f_p$ (GHz)')
     plt.title('Precessional frequency\n' + name)
-    paramstr = ('$M_s$ = ' + "{0:.2f}".format(mscgs) + ' emu/cm^3\n'
-                + '$H_k$ = ' + "{0:.2f}".format(hkcgs) + ' Oe\n'
-                + '$H_{cp}$ = ' + "{0:.2f}".format(hcpcgs) + ' Oe\n'
-                + '$r^2$ = ' + "{0:.4f}".format(r2))
+    paramstr = ('$M_s$ = ' + "{0:.3g}".format(mscgs)
+                + ' $\pm$ {0:.3g}'.format(msconfint) + ' emu/cm^3\n'
+                + '$H_k$ = ' + "{0:.2g}".format(hkcgs)
+                + ' $\pm$ {0:.2g}'.format(hkconfint) + ' Oe\n'
+                + '$H_{cp}$ = ' + "{0:.2f}".format(hcpcgs)
+                + ' $\pm$ {0:.2g}'.format(hcconfint) + ' Oe\n'
+#                + '$r^2$ = ' + "{0:.4f}".format(r2) + '\n'
+                + r'$\chi^2_\nu$ = {0:.4f}'.format(c2r))
     plt.text(0.75, 0.25, paramstr,
              horizontalalignment='center',
              verticalalignment='center',
@@ -157,16 +153,20 @@ def characterize_fits(analysis):
     r['Ms (emu/cm^3)'] = mscgs
     r['Hk (Oe)'] = hkcgs
 
+
     # TODO: make a function to clean up plotting section a little
 
     # prepare damping vs field plot
     gmr = 28 * 2 * pi  # Gyromagnetic ratio, GHz/T
     mu0 = 4 * pi * 1E-7  # vacuum permeability (T-m/A)
-    ds = np.divide(2, ds) * 1 / (gmr * mu0 * mscgs * 1E3)
+    ds = np.multiply(2, ds) * 1 / (gmr * mu0 * mscgs * 1E3)
+    dcs = np.multiply(2, dcs) * 1 / (gmr * mu0 * mscgs * 1E3)
     r['average damping'] = np.mean(ds)
     r['Damping'] = ds
 
+    deb = np.multiply(0.5, dcs)
     plt.plot(hs, ds, 'bs-')
+    #plt.errorbar(hs, ds, yerr= deb)
     plt.xlabel('bias field (Oe)')
     plt.ylabel('damping')
     plt.title('Damping\n' + name[:10] + '...')
@@ -181,34 +181,48 @@ def characterize_fits(analysis):
     plt.savefig(os.path.join('.', name + '-ampl.png'))
     plt.clf()
 
-
-    # prepare chi square vs H plot and chi square histogram
-    plt.plot(hs, cs)
-    plt.xlabel('bias field (Oe)')
-    plt.ylabel('Chi square')
-    plt.title('Chi-square error of signal fits')
-    plt.savefig(os.path.join('.', name + '-chi-square.png'))
-    plt.clf()
-    n, bins, patches = plt.hist(cs, 100, normed=1, alpha=0.75)
-    plt.title('Chi-square error of signal fits')
-    plt.savefig(os.path.join('.', name + '-chi-square-hist.png'))
-    plt.clf()
-
     # Now that that's all done, add the results to the analysis object
     analysis.set_results(r)
     return None
 
 
-def precession(x, p0, p1, p2):
+def precession(x, ms, hk, hcp):
     mub = 9.274E-24  # Bohr Magneton (J/T)
     mu0 = 4 * pi * 1E-7  # vacuum permeability (T-m/A)
     hbar = 1.06E-34  # reduced Planck's constant (J-S)
     g = 2  # Spectroscopic splitting factor, from Silva et al
-    gamma = g * mub / hbar
+    gamma = 2 * pi * 28
     # fp = gamma * mu0 * np.sqrt(p0*np.abs(x + p1))
-    fp = gamma * mu0 * np.sqrt(p0 * (p1 + np.abs(x + p2)))
+    fp = gamma * mu0 * np.sqrt(ms * (hk + np.abs(x + hcp)))
+    return fp
+
+def precession2(h, ms, hk, hcp):
+    mu0 = 4 * pi * 1E-7  # vacuum  (T-m/A)
+    gamma = 2 * pi * 28 # GHz / T
+    heff = np.abs(h + hcp)
+    fp = gamma * mu0 * np.sqrt((heff + hk)*(heff + hk + ms))
     return fp
 
 
 def sos(x):
     return np.sum(np.multiply(x, x))
+
+def get_subkey(d, subkey):
+    r = []
+    for key, val in d.items():
+        try:
+            r.append(val[subkey])
+        except (TypeError, KeyError):
+            pass
+    return r
+
+def replinf(x, repl):
+    """
+    removed infinite values from array x and replace them with repl.
+    :param x:
+    :return:
+    """
+    for i,_ in enumerate(x):
+        if x[i] == np.inf:
+            x[i] = repl
+    return x

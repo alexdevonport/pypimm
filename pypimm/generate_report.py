@@ -1,6 +1,6 @@
 __author__ = 'alex'
 import os, sys, re, subprocess, pandas
-
+import numpy as np
 def listdir_fullpath(d):
     return [os.path.join(d, f) for f in os.listdir(d)]
 
@@ -23,7 +23,12 @@ def generate_report(analysis, templatedir):
     # This is just to get a sense of what pandas output looks like
     fitsFrame = pandas.DataFrame.from_dict(fits).transpose()
     dataFrame = pandas.DataFrame.from_dict(data)
+
+    for k, v in properties.items():
+        print('length of {:s}: {:d}'.format(k, np.size(v)))
+
     propertiesFrame = pandas.DataFrame.from_dict(properties)
+    #propertiesFrame.set_index(properties.keys())
 
     writer = pandas.ExcelWriter('RESULTS_'+name+'.xlsx')
 

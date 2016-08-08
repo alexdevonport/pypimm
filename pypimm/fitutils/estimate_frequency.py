@@ -1,7 +1,8 @@
 import numpy as np
-from math import log2, ceil
+from math import log2, ceil, pi
 import matplotlib.pyplot as plt
 import scipy.signal
+import scipy.optimize
 import os
 __author__ = 'alex'
 
@@ -41,12 +42,31 @@ def estimate_frequency(timebase, signal, resolution=0.01, name=None):
     #nyq = int(len(pspect)/2)
     #flist = np.array(range(len(pspect))) * fs / npts
     flist, pspect = scipy.signal.periodogram(signal, fs)
-    pspectmhalf = pspect - 0.5 * np.max(pspect)
+    pspect *= 1E4
+
+
 
     # find the maximum spectrum value & its index
     # since we're looking at real data, we'll only consider the first half of the spectrum
     maxind = (pspect[:int(len(pspect)/2)]).argmax()
     maxf = fs / npts * maxind
+
+    pguess = [1, 1, 1, 1, 1]
+    """
+    popt, pcov = scipy.optimize.curve_fit(spectmodel, flist, pspect, pguess)
+    bestfit = spectmodel(flist, *popt)
+
+    plt.clf()
+    #plt.plot(flist[:nyq] , pspect[:nyq])
+    plt.plot(flist, pspect, label='data')
+    plt.plot(flist, bestfit, label='fit')
+    plt.xlabel('Frequency (GHz)')
+    plt.ylabel('PSD (V$^2$ / GHz)')
+    plt.title(name + ' Spectrum')
+    fp = os.path.join('.','spectra', name + 'spectrum.png')
+    plt.savefig(fp)
+    """
+
     #print('FREQUENCY ESTIMATE: {}'.format(maxf))
     # return frequency bin corresponding to the max index
     return maxf

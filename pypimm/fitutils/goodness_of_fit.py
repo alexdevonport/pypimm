@@ -1,6 +1,7 @@
 import numpy as np
 import scipy.stats
 import scipy.optimize
+import scipy.stats
 import random
 import matplotlib.pyplot as plt
 __author__ = 'alex'
@@ -34,21 +35,18 @@ def const_chi(fun, x, y, p, conf_int=0.95):
 def minimize_reduced_chi2(fun, x, y, p0, sigma=1.0):
     res = lambda p: abs(np.add(redchi2(fun, x, y, p, sigma=sigma), -1.0))
     popt = scipy.optimize.minimize(res, p0, method='Nelder-Mead').x
-    print(popt)
     bestchi2 = res(popt) + 1
-    print(bestchi2)
     return popt, bestchi2
 
 def minimize_absolute(fun, x, y, p0, sigma=1.0):
     res = lambda p: np.sum(np.abs(y - fun(x, *p))/sigma)
     popt = scipy.optimize.minimize(res, p0, method='Nelder-Mead').x
     bestchi2 = chi2(fun, x, y, popt, sigma=sigma)
-    print(popt)
     return popt, bestchi2
 
-def basin_lsq(fun, x, y, p0, sigma=1.0, bounds=None):
+def basin_lsq(fun, x, y, p0, sigma=1.0, bounds=None, niter=500):
     res = lambda p: np.sum(np.power((y - fun(x, *p)),2))
-    popt = scipy.optimize.basinhopping(res, p0, niter=50,
+    popt = scipy.optimize.basinhopping(res, p0, niter=niter,
         minimizer_kwargs={'bounds':bounds}).x
     bestchi2 = chi2(fun, x, y, popt, sigma=sigma)
     return popt, bestchi2
@@ -67,7 +65,6 @@ def minimize_lorentz(fun, x, y, p0, sigma=1.0):
         return np.sum(np.log(0.5*a + 1))
     popt = scipy.optimize.minimize(res, p0, method='Nelder-Mead').x
     bestchi2 = chi2(fun, x, y, popt, sigma=sigma)
-    print(popt)
     return popt, bestchi2
 
 def redchi2(fun, x, y, p, sigma=1.0):
@@ -104,7 +101,8 @@ def noise_stdev(x):
     slope, intercept, r_value, p_value, std_err = scipy.stats.linregress(t,x)
     xcor = x - (slope*t + intercept)
     plt.clf()
-    plt.plot(t, xcor)
+    scipy.stats.probplot(xcor, plot=plt)
+    #plt.plot(t, xcor)
     name = random.randint(0, 10000000)
     plt.title('noise sigma data')
     plt.savefig('./Error/{:d}_noise.png'.format(name))

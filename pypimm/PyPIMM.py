@@ -75,10 +75,9 @@ for filepath in sys.argv[1:]:
     os.mkdir(os.path.join('.', 'spectra'))
     os.mkdir(os.path.join('.', 'envelopes'))
     os.mkdir(os.path.join('.', 'sigfits'))
-    os.mkdir(os.path.join('.', 'report'))
     os.mkdir(os.path.join('.', 'Error'))
     os.mkdir(os.path.join('.', 'Error','time-domain'))
-    os.mkdir(os.path.join('.', 'Error','histogram'))
+    os.mkdir(os.path.join('.', 'Error','normal-plot'))
 
     # for each signal, calculate fit parameters
     fit_data(analysis)
