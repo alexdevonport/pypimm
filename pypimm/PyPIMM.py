@@ -10,7 +10,7 @@ from fitutils import fit_data, characterize_fits
 from generate_report import generate_report
 from get_config_value import get_config_value
 from user_input import user_input
-from compile_results import compile_results
+from compile_results import compile_results, compile_damping
 
 
 #logging.basicConfig(level=logging.DEBUG)
@@ -98,5 +98,6 @@ for filepath in sys.argv[1:]:
 # TODO: Now that ALL analysis is over, create a 'highlights' document showing
 # all frequency and damping plots
 compile_results(allres)
+compile_damping(allres)
 # Now that everything is done, report to the user and quit.
 print('Analysis complete.')

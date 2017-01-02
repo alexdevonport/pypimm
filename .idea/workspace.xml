@@ -5,26 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8330f7bf-ea91-42c0-8d91-1ecac6f9455b" name="Default" comment="``">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/pypimm/fitutils/optimal_filter.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/PyPIMM.iml" afterPath="$PROJECT_DIR$/.idea/PyPIMM.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pypimm/overall-report.xlsx" afterPath="$PROJECT_DIR$/pypimm/overall-report.xlsx" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pypimm/PimmAnalysis.py" afterPath="$PROJECT_DIR$/pypimm/PimmAnalysis.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pypimm/PyPIMM.py" afterPath="$PROJECT_DIR$/pypimm/PyPIMM.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pypimm/compile_results.py" afterPath="$PROJECT_DIR$/pypimm/compile_results.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pypimm/fitutils/__init__.py" afterPath="$PROJECT_DIR$/pypimm/fitutils/__init__.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pypimm/fitutils/characterize_fits.py" afterPath="$PROJECT_DIR$/pypimm/fitutils/characterize_fits.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pypimm/fitutils/confidence_limits.py" afterPath="$PROJECT_DIR$/pypimm/fitutils/confidence_limits.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pypimm/fitutils/error_analysis.py" afterPath="$PROJECT_DIR$/pypimm/fitutils/error_analysis.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pypimm/fitutils/estimate_damping.py" afterPath="$PROJECT_DIR$/pypimm/fitutils/estimate_damping.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pypimm/fitutils/estimate_frequency.py" afterPath="$PROJECT_DIR$/pypimm/fitutils/estimate_frequency.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pypimm/fitutils/fit_data.py" afterPath="$PROJECT_DIR$/pypimm/fitutils/fit_data.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pypimm/fitutils/fwhm.py" afterPath="$PROJECT_DIR$/pypimm/fitutils/fwhm.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pypimm/fitutils/goodness_of_fit.py" afterPath="$PROJECT_DIR$/pypimm/fitutils/goodness_of_fit.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pypimm/fitutils/preprocess.py" afterPath="$PROJECT_DIR$/pypimm/fitutils/preprocess.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pypimm/generate_report.py" afterPath="$PROJECT_DIR$/pypimm/generate_report.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pypimm/load_data.py" afterPath="$PROJECT_DIR$/pypimm/load_data.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pypimm/pypimmconfig.txt" afterPath="$PROJECT_DIR$/pypimm/pypimmconfig.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pypimm/tdfmr/landlif.py" afterPath="$PROJECT_DIR$/pypimm/tdfmr/landlif.py" />
     </list>
     <ignored path="PyPIMM.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -44,76 +39,13 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="pypimmconfig.txt" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/pypimm/pypimmconfig.txt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
-              <caret line="5" column="20" selection-start-line="5" selection-start-column="20" selection-end-line="5" selection-end-column="20" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="generate_report.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pypimm/generate_report.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="330">
-              <caret line="23" column="60" selection-start-line="23" selection-start-column="48" selection-end-line="23" selection-end-column="60" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="compile_results.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pypimm/compile_results.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="17" column="23" selection-start-line="17" selection-start-column="23" selection-end-line="17" selection-end-column="23" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="fwhm.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pypimm/fitutils/fwhm.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
-              <caret line="22" column="19" selection-start-line="22" selection-start-column="19" selection-end-line="22" selection-end-column="19" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="goodness_of_fit.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pypimm/fitutils/goodness_of_fit.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="4" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="preprocess.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pypimm/fitutils/preprocess.py">
+      <file leaf-file-name="estimate_damping.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pypimm/fitutils/estimate_damping.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="600">
-              <caret line="47" column="55" selection-start-line="47" selection-start-column="55" selection-end-line="47" selection-end-column="55" />
+              <caret line="45" column="81" selection-start-line="45" selection-start-column="81" selection-end-line="45" selection-end-column="81" />
               <folding>
-                <element signature="e#0#11#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="fit_data.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pypimm/fitutils/fit_data.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="855">
-              <caret line="67" column="33" selection-start-line="67" selection-start-column="33" selection-end-line="67" selection-end-column="33" />
-              <folding>
-                <marker date="1470431566000" expanded="true" signature="361:8635" ph="..." />
-                <marker date="1470431566000" expanded="true" signature="2565:8635" ph="..." />
+                <element signature="e#20#56#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -124,9 +56,81 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="450">
               <caret line="37" column="36" selection-start-line="37" selection-start-column="36" selection-end-line="37" selection-end-column="36" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="landlif.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pypimm/tdfmr/landlif.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="765">
+              <caret line="55" column="0" selection-start-line="55" selection-start-column="0" selection-end-line="55" selection-end-column="0" />
               <folding>
-                <element signature="e#0#19#0" expanded="true" />
+                <element signature="e#0#22#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="pypimmconfig.txt" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/pypimm/pypimmconfig.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="75">
+              <caret line="5" column="21" selection-start-line="5" selection-start-column="21" selection-end-line="5" selection-end-column="21" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="goodness_of_fit.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pypimm/fitutils/goodness_of_fit.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="690">
+              <caret line="51" column="25" selection-start-line="51" selection-start-column="25" selection-end-line="51" selection-end-column="25" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="load_data.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pypimm/load_data.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="195">
+              <caret line="19" column="20" selection-start-line="19" selection-start-column="20" selection-end-line="19" selection-end-column="20" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="preprocess.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pypimm/fitutils/preprocess.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1845">
+              <caret line="130" column="27" selection-start-line="130" selection-start-column="27" selection-end-line="130" selection-end-column="27" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="fit_data.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pypimm/fitutils/fit_data.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="3540">
+              <caret line="248" column="53" selection-start-line="248" selection-start-column="53" selection-end-line="248" selection-end-column="53" />
+              <folding>
+                <element signature="e#21#40#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="estimate_frequency.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pypimm/fitutils/estimate_frequency.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="690">
+              <caret line="51" column="29" selection-start-line="51" selection-start-column="29" selection-end-line="51" selection-end-column="29" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -134,20 +138,8 @@
       <file leaf-file-name="characterize_fits.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pypimm/fitutils/characterize_fits.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1350">
-              <caret line="97" column="0" selection-start-line="97" selection-start-column="0" selection-end-line="97" selection-end-column="0" />
-              <folding>
-                <element signature="e#0#9#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="error_analysis.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pypimm/fitutils/error_analysis.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="390">
-              <caret line="28" column="42" selection-start-line="28" selection-start-column="4" selection-end-line="28" selection-end-column="42" />
+            <state relative-caret-position="1005">
+              <caret line="74" column="54" selection-start-line="74" selection-start-column="54" selection-end-line="74" selection-end-column="54" />
               <folding />
             </state>
           </provider>
@@ -195,7 +187,6 @@
         <option value="$PROJECT_DIR$/docs/index.rst" />
         <option value="$PROJECT_DIR$/pypimm/__init__.py" />
         <option value="$PROJECT_DIR$/docs/conf.py" />
-        <option value="$PROJECT_DIR$/pypimm/tdfmr/landlif.py" />
         <option value="$PROJECT_DIR$/pypimm/fitutils/grid-lsq.py" />
         <option value="$PROJECT_DIR$/pypimm/fitutils/goodness-of-fit.py" />
         <option value="$PROJECT_DIR$/pypimm/fitutils/robust_fit.py" />
@@ -203,31 +194,31 @@
         <option value="$PROJECT_DIR$/pypimm/fitutils/shotgun_lsq.py" />
         <option value="$PROJECT_DIR$/pypimm/get_config_value.py" />
         <option value="$PROJECT_DIR$/compile_results.py" />
-        <option value="$PROJECT_DIR$/pypimm/PimmAnalysis.py" />
-        <option value="$PROJECT_DIR$/pypimm/load_data.py" />
-        <option value="$PROJECT_DIR$/pypimm/fitutils/estimate_frequency.py" />
         <option value="$PROJECT_DIR$/pypimm/fitutils/fwhm.py" />
         <option value="$PROJECT_DIR$/pypimm/fitutils/__init__.py" />
         <option value="$PROJECT_DIR$/pypimm/fitutils/confidence_limits.py" />
+        <option value="$PROJECT_DIR$/pypimm/fitutils/error_analysis.py" />
+        <option value="$PROJECT_DIR$/pypimm/fitutils/optimal_filter.py" />
+        <option value="$PROJECT_DIR$/pypimm/PimmAnalysis.py" />
+        <option value="$PROJECT_DIR$/pypimm/fitutils/goodness_of_fit.py" />
         <option value="$PROJECT_DIR$/pypimm/generate_report.py" />
         <option value="$PROJECT_DIR$/pypimm/PyPIMM.py" />
-        <option value="$PROJECT_DIR$/pypimm/fitutils/error_analysis.py" />
-        <option value="$PROJECT_DIR$/pypimm/fitutils/estimate_damping.py" />
-        <option value="$PROJECT_DIR$/pypimm/fitutils/goodness_of_fit.py" />
         <option value="$PROJECT_DIR$/pypimm/compile_results.py" />
-        <option value="$PROJECT_DIR$/pypimm/fitutils/preprocess.py" />
-        <option value="$PROJECT_DIR$/pypimm/fitutils/optimal_filter.py" />
-        <option value="$PROJECT_DIR$/pypimm/fitutils/fit_data.py" />
+        <option value="$PROJECT_DIR$/pypimm/tdfmr/landlif.py" />
+        <option value="$PROJECT_DIR$/pypimm/fitutils/estimate_frequency.py" />
+        <option value="$PROJECT_DIR$/pypimm/fitutils/estimate_damping.py" />
+        <option value="$PROJECT_DIR$/pypimm/load_data.py" />
         <option value="$PROJECT_DIR$/pypimm/fitutils/characterize_fits.py" />
+        <option value="$PROJECT_DIR$/pypimm/fitutils/preprocess.py" />
+        <option value="$PROJECT_DIR$/pypimm/fitutils/fit_data.py" />
         <option value="$PROJECT_DIR$/pypimm/pypimmconfig.txt" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="9" />
-    <option name="y" value="27" />
-    <option name="width" value="1348" />
-    <option name="height" value="741" />
+    <option name="y" value="26" />
+    <option name="width" value="1366" />
+    <option name="height" value="712" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -273,7 +264,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -344,13 +335,13 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="recentsLimit" value="5" />
     <property name="full.screen.before.presentation.mode" value="false" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.Language Defaults" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="restartRequiresConfirmation" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
@@ -370,6 +361,7 @@
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder2" value="2" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth3" value="1010" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder3" value="3" />
+    <property name="ToolWindowEvent Log.ShowToolbar" value="false" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -379,7 +371,7 @@
       <recent name="$PROJECT_DIR$/fitutils" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.compile_results">
+  <component name="RunManager" selected="Python.landlif (1)">
     <configuration default="false" name="robust_fit" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -480,6 +472,18 @@
       <option name="SCRIPT_NAME" value="" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="Tox" factoryName="Tox">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="PyPIMM" />
       <method />
     </configuration>
     <configuration default="true" type="docs" factoryName="Docutils task">
@@ -689,10 +693,10 @@
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Python.compile_results" />
-        <item index="1" class="java.lang.String" itemvalue="Python.grid-lsq" />
-        <item index="2" class="java.lang.String" itemvalue="Python.fwhm" />
-        <item index="3" class="java.lang.String" itemvalue="Python.landlif (1)" />
+        <item index="0" class="java.lang.String" itemvalue="Python.landlif (1)" />
+        <item index="1" class="java.lang.String" itemvalue="Python.compile_results" />
+        <item index="2" class="java.lang.String" itemvalue="Python.grid-lsq" />
+        <item index="3" class="java.lang.String" itemvalue="Python.fwhm" />
         <item index="4" class="java.lang.String" itemvalue="Python.robust_fit" />
       </list>
     </recent_temporary>
@@ -724,27 +728,27 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="9" y="27" width="1348" height="741" extended-state="0" />
+    <frame x="0" y="26" width="1366" height="712" extended-state="6" />
     <editor active="false" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24777448" sideWeight="0.7327044" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3291536" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32776934" sideWeight="0.50447094" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20581655" sideWeight="0.7327044" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32809773" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25261325" sideWeight="0.50633854" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32861635" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Python Console" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25477707" sideWeight="0.49552906" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25314465" sideWeight="0.49701938" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2530541" sideWeight="0.49552906" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.28831562" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24829674" sideWeight="0.2672956" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39779875" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25261325" sideWeight="0.49366143" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32704404" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32635254" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39779875" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -763,7 +767,7 @@
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="5" />
+      <option name="time" value="6" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -772,9 +776,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="4" column="5" selection-start-line="4" selection-start-column="5" selection-end-line="4" selection-end-column="5" />
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -782,9 +783,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -855,7 +853,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -892,7 +889,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="17" column="15" selection-start-line="17" selection-start-column="15" selection-end-line="17" selection-end-column="15" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -914,13 +910,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="14" column="18" selection-start-line="14" selection-start-column="18" selection-end-line="14" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pypimm/tdfmr/landlif.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="51" column="23" selection-start-line="51" selection-start-column="23" selection-end-line="51" selection-end-column="23" />
         </state>
       </provider>
     </entry>
@@ -995,28 +984,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pypimm/PimmAnalysis.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="4" column="78" selection-start-line="4" selection-start-column="78" selection-end-line="4" selection-end-column="78" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pypimm/load_data.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="42" column="0" selection-start-line="42" selection-start-column="0" selection-end-line="42" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file:///usr/lib/python3.5/tokenize.py" />
-    <entry file="file://$PROJECT_DIR$/pypimm/fitutils/estimate_frequency.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="72" column="0" selection-start-line="72" selection-start-column="0" selection-end-line="72" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/pypimm/fitutils/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -1024,32 +992,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pypimm/fitutils/confidence_limits.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="25" column="53" selection-start-line="25" selection-start-column="53" selection-end-line="25" selection-end-column="53" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pypimm/PyPIMM.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="79" column="51" selection-start-line="79" selection-start-column="51" selection-end-line="79" selection-end-column="51" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pypimm/fitutils/estimate_damping.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="23" column="18" selection-start-line="23" selection-start-column="18" selection-end-line="23" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/pypimm/fitutils/fwhm.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="285">
           <caret line="22" column="19" selection-start-line="22" selection-start-column="19" selection-end-line="22" selection-end-column="19" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1057,32 +1003,82 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="390">
           <caret line="28" column="42" selection-start-line="28" selection-start-column="4" selection-end-line="28" selection-end-column="42" />
-          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pypimm/fitutils/goodness_of_fit.py">
+    <entry file="file://$PROJECT_DIR$/pypimm/PimmAnalysis.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="4" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
-          <folding />
+        <state relative-caret-position="990">
+          <caret line="66" column="23" selection-start-line="66" selection-start-column="23" selection-end-line="66" selection-end-column="23" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/pypimm/generate_report.py">
       <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="383">
+          <caret line="36" column="28" selection-start-line="36" selection-start-column="28" selection-end-line="36" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pypimm/PyPIMM.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1059">
+          <caret line="12" column="60" selection-start-line="12" selection-start-column="60" selection-end-line="12" selection-end-column="60" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pypimm/compile_results.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="36" column="60" selection-start-line="36" selection-start-column="60" selection-end-line="36" selection-end-column="60" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pypimm/fitutils/confidence_limits.py">
+      <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="330">
-          <caret line="23" column="60" selection-start-line="23" selection-start-column="48" selection-end-line="23" selection-end-column="60" />
+          <caret line="25" column="53" selection-start-line="25" selection-start-column="53" selection-end-line="25" selection-end-column="53" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pypimm/fitutils/goodness_of_fit.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="690">
+          <caret line="51" column="25" selection-start-line="51" selection-start-column="25" selection-end-line="51" selection-end-column="25" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pypimm/fitutils/preprocess.py">
+    <entry file="file://$PROJECT_DIR$/pypimm/load_data.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="19" column="20" selection-start-line="19" selection-start-column="20" selection-end-line="19" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pypimm/fitutils/estimate_frequency.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="690">
+          <caret line="51" column="29" selection-start-line="51" selection-start-column="29" selection-end-line="51" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pypimm/fitutils/characterize_fits.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1005">
+          <caret line="74" column="54" selection-start-line="74" selection-start-column="54" selection-end-line="74" selection-end-column="54" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pypimm/fitutils/estimate_damping.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="600">
-          <caret line="47" column="55" selection-start-line="47" selection-start-column="55" selection-end-line="47" selection-end-column="55" />
+          <caret line="45" column="81" selection-start-line="45" selection-start-column="81" selection-end-line="45" selection-end-column="81" />
           <folding>
-            <element signature="e#0#11#0" expanded="true" />
+            <element signature="e#20#56#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1091,45 +1087,42 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="450">
           <caret line="37" column="36" selection-start-line="37" selection-start-column="36" selection-end-line="37" selection-end-column="36" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pypimm/fitutils/preprocess.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1845">
+          <caret line="130" column="27" selection-start-line="130" selection-start-column="27" selection-end-line="130" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pypimm/tdfmr/landlif.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="765">
+          <caret line="55" column="0" selection-start-line="55" selection-start-column="0" selection-end-line="55" selection-end-column="0" />
           <folding>
-            <element signature="e#0#19#0" expanded="true" />
+            <element signature="e#0#22#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/pypimm/fitutils/fit_data.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="855">
-          <caret line="67" column="33" selection-start-line="67" selection-start-column="33" selection-end-line="67" selection-end-column="33" />
+        <state relative-caret-position="3540">
+          <caret line="248" column="53" selection-start-line="248" selection-start-column="53" selection-end-line="248" selection-end-column="53" />
           <folding>
-            <marker date="1470431566000" expanded="true" signature="361:8635" ph="..." />
-            <marker date="1470431566000" expanded="true" signature="2565:8635" ph="..." />
+            <element signature="e#21#40#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pypimm/fitutils/characterize_fits.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1350">
-          <caret line="97" column="0" selection-start-line="97" selection-start-column="0" selection-end-line="97" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pypimm/compile_results.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="17" column="23" selection-start-line="17" selection-start-column="23" selection-end-line="17" selection-end-column="23" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/pypimm/pypimmconfig.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="75">
-          <caret line="5" column="20" selection-start-line="5" selection-start-column="20" selection-end-line="5" selection-end-column="20" />
+          <caret line="5" column="21" selection-start-line="5" selection-start-column="21" selection-end-line="5" selection-end-column="21" />
           <folding />
         </state>
       </provider>

@@ -44,7 +44,7 @@ def minimize_absolute(fun, x, y, p0, sigma=1.0):
     bestchi2 = chi2(fun, x, y, popt, sigma=sigma)
     return popt, bestchi2
 
-def basin_lsq(fun, x, y, p0, sigma=1.0, bounds=None, niter=500):
+def basin_lsq(fun, x, y, p0, sigma=1.0, bounds=None, niter=1000):
     res = lambda p: np.sum(np.power((y - fun(x, *p)),2))
     popt = scipy.optimize.basinhopping(res, p0, niter=niter,
         minimizer_kwargs={'bounds':bounds}).x

@@ -9,6 +9,7 @@ class PimmAnalysis():
         self.raw_data = raw_data
         self.metadata = metadata
         self.fits = fits
+        self.rawfits = None
         self.results = results
         self.progress = progress
         self.configs = configs
@@ -57,6 +58,14 @@ class PimmAnalysis():
 
     def get_fits(self):
         return self.fits
+
+    def set_rawfits(self, newfits):
+        self.rawfits = newfits
+        return None
+
+    def get_rawfits(self):
+        return self.rawfits
+
 
     def set_results(self, newresults):
         self.results = newresults

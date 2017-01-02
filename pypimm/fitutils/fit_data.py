@@ -3,10 +3,12 @@ __author__ = 'alex'
 from math import pi
 import logging
 import re
+import copy
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
 import scipy.optimize
+import scipy.signal
 import warnings
 import collections
 from ProgBar import ProgBar
@@ -17,47 +19,32 @@ plt.style.use(['seaborn-paper'])
 
 
 def fit_data(analysis):
-    '''
-    The univariate signal given by (timebase, signal) is fit to a
-    damped sine of the form
-
-    .. math::
-        y(t) = A \exp(-g1*(t-t_0)) * cos(2 \pi f (t-t_0)) + B exp(-g_2 (t-t)0)).
-
-    t0 is found first, and is taken as
-    the time of the first zero-crossing after a user-specified amount of data to skip. A is
-    found next, by shifting the last value of the signal to zero and taking the magnitude of
-    the first data point. The frequency and damping are a little trickier to find, and are
-    covered in their respective functions.
-
-    Once estimates for the values are made this way, we refine the values by making a
-    Lev-Mar best fit.
-
-    :param timebase: time axis of signal
-    :param signal:   voltage (y-values) of signal
-    :param skip:     optionally, initial data to skip.
-    :return:         dict containing amplitude, frequency, damping, and start time of the
-                     damped cosine that best fits the signal.
-    '''
-
 
     # First order of business, get relevant data from the analysis object
     signals = analysis.get_raw_data()
     configs = analysis.get_configs()
     fields = analysis.get_fields()
     setname = analysis.get_name()
-    chi2lower = configs.getfloat('fit-params', 'reduced chi squared lower thresh')
-    chi2upper = configs.getfloat('fit-params', 'reduced chi squared upper thresh')
-    r2thresh = configs.getfloat('fit-params', 'signal fit r squared threshold')
-    tstdev = configs.getfloat('fit-params', 'stdev measurement length')
+    chi2lower = configs.getfloat('fit-params', 
+        'reduced chi squared lower thresh')
+    chi2uppers = configs.getfloat('fit-params',
+        'reduced chi squared upper thresh')
+    chi2uppere = configs.getfloat('fit-params',
+        'reduced chi squared upper thresh for expfit')
+    r2thresh = configs.getfloat('fit-params',
+        'signal fit r squared threshold')
+    tstdev = configs.getfloat('fit-params',
+        'stdev measurement length')
 
     # Perform the signal fit procedure for every signal in the analysis
     # object's raw data
     r = collections.OrderedDict()  # temporary storage for fit results
+    rall = collections.OrderedDict()
     # set up the analysis progres bar
     nsigs = len(analysis.get_raw_data())
     if analysis.get_progress() is None:
-        analysis.set_progress(ProgBar(msg = 'Analyzing '+setname+'...',maxn=nsigs, w=50))
+        analysis.set_progress(ProgBar(msg = 'Analyzing '+setname+'...',
+            maxn=nsigs, w=50))
         pb = analysis.get_progress()
     else:
         pb = analysis.get_progress()
@@ -65,14 +52,14 @@ def fit_data(analysis):
 
     # print header for tabulated printout
     print('    {:20s}'.format(' '), end=' '*2)
-    for pk in ['ampl (mV)', 'freq(GHz)', 'tau', 'intampl', 'inttau', 'del (ns)', 'offs (mV)']:
+    for pk in ['ampl (mV)', 'freq(GHz)', 'tau', 'chi^2']:
             print('{:9s}'.format(pk), end=' '*2)
     print('')
     for (name, signal), h in zip(signals.items(), fields):
         fitres = collections.OrderedDict()
         fitres['bias field'] = h
         timebase = analysis.get_timebase()
-        timebase, signal, timebase_unf, signal_unf, signal_raw = fit.preprocess(timebase, signal, configs)
+        timebase, signal, timebase_unf, signal_unf, signal_raw, tpeak = fit.preprocess(timebase, signal, configs)
         fs = 1 / (timebase[1] - timebase[0])
         nstdev = int(fs * tstdev)
         noise_sample = signal_raw[-nstdev:]
@@ -80,51 +67,114 @@ def fit_data(analysis):
         sigerr = fit.noise_stdev(noise_sample)
         fsigerr = fit.noise_stdev(fnoise_sample)
         fitres['noise sigma (mV)'] = sigerr
-        amplitude_est = np.max(signal[:25])
-        frequency_est = fit.estimate_frequency(timebase, signal_unf, name=name)
+        amplitude_est = np.mean(signal_unf[:25])
+        offset_est = np.mean(signal_unf[-25:])
+        frequency_est = fit.estimate_frequency(timebase, signal_unf, 
+            name=name)
         fitres['spectral peak'] = frequency_est
-        fitres['delta f / f'] = fit.spectrum_fmhw(signal, fs, name=name)
-        damping_est = fit.estimate_damping(timebase, signal, frequency_est, name=name)
+        fitres['delta f / f'] = fit.spectrum_fmhw(signal_unf, fs, name=name)
+        damping_est = fit.estimate_damping(timebase, signal_unf, 
+            frequency_est, name=name)
         # With those estimates ready, we can try fitting the signal
-        pguess = [amplitude_est, frequency_est, 1/damping_est, 0.1, 5, 0.0, 0.0]
-
-        lbound=(-100, 0, 0, -1.5*amplitude_est, 0, -2, -100)
-        ubound=(100, 3.5, 5, 1.5*amplitude_est, 5, 2, 100)
+        pguess = [0*amplitude_est, frequency_est, 0*damping_est, 0, 0, 0, 
+            0*offset_est, 1]
+        lbound=(-100, 0, 0, -100, 0, -pi/2, -100, -100)
+        ubound=(100, 6, np.inf, 100, np.inf, pi/2, 100, 100)
         zbounds = list(zip(ubound, lbound))
 
+        if configs.getboolean('fit-params','fit smooth'):
+            fitd = signal
+        else:
+            fitd = signal_unf
+
         if configs.getboolean('fit-params', 'use shotgun-lsq'):
-            spreads = str_to_floats(configs.get('fit-params', 'shotgun-lsq spreads'))
+            spreads = str_to_floats(configs.get('fit-params', 
+                'shotgun-lsq spreads'))
             bestp = pguess
-            bestp = fit.shotgun_lsq(timebase, signal, sfit,
+            bestp = fit.shotgun_lsq(timebase, signal_unf, sfit,
                                        p0=pguess,
                                        spread=spreads,
-                                       sigma=fsigerr,
+                                       sigma=sigerr,
                                        maxiter=1000)
         try:
-            bestp, c2r = fit.basin_lsq(sfit, timebase, signal, bestp, sigma=fsigerr,
-                                       bounds=zbounds)
+            bestp, c2r = fit.basin_lsq(sfit, timebase, 
+                signal_unf, bestp, sigma=sigerr,
+                bounds=zbounds)
             warnings.filterwarnings('ignore')
-            bestp, bestcov = scipy.optimize.curve_fit(sfit, timebase, signal_unf,
-                                                      sigma=sigerr,
-                                                      absolute_sigma=True,
-                                                      method='trf',
-                                                      p0=bestp)
-            warnings.resetwarnings()
-            #print('BEFORE', bestp)
-            #worstint = fit.conf_chi2(sfit, timebase, signal_unf, bestp, 2, sigma=sigerr)
-            #print('AFTER', bestp)
-            bestpc = fit.conf1d(bestp, bestcov, 2)
-            #bestint = [st[1] for st in bestpc]
-            #print('DELTA CONFIDENCE INTERVALS: ', np.subtract(bestint, worstint))
+            bestps, bestcovs = scipy.optimize.curve_fit(sfit, timebase, 
+                fitd,
+                sigma=sigerr,
+                absolute_sigma=True,
+                #bounds=(lbound, ubound),
+                method='trf',
+                #p0=bestp,
+                max_nfev=5000)
+            c2rs = fit.redchi2(sfit, timebase, signal_unf, bestps, 
+                sigma=sigerr)
+            r2s = fit.nlcorr(sfit, timebase, signal_unf, bestps)
+        except RuntimeError as e:
+            print('FAILED S FIT:')
+            #print(e)
+            c2rs = np.inf
+            r2 = -np.inf
+            r2s = -np.inf
+            bestps = pguess
+            bestcovs = np.ones((len(pguess), len(pguess)))
+        try:
+            bestpe, bestcove = scipy.optimize.curve_fit(expfit, 
+                timebase, fitd,
+                sigma=sigerr,
+                absolute_sigma=True,
+                method='trf',
+                p0=bestp)
+            c2re = fit.redchi2(expfit, timebase, signal_unf, bestpe, 
+                sigma=sigerr)
+            r2e = fit.nlcorr(expfit, timebase, signal_unf, bestpe)
+            #bestcove = np.ones((len(pguess), len(pguess)))
+            bestfite = expfit(timebase, *bestpe)
+        except RuntimeError as e:
+            print('FAILED EXP FIT:')
+            #print(e)
+            r2 = -np.inf
+            r2e = -np.inf
+            bestpe = [1, 1, 1, 1, 1, 1, 1]
+            bestcove = np.ones((len(pguess), len(pguess)))
+        #print('c2rs: {:.4g}, c2re: {:.4g}'.format(c2rs, c2re))
+        #if c2re < c2rs:
+        if False: # temporarily disabling exp fit
+            bestp = [bestpe[0], 0, bestp[2], 0, 
+                bestpe[4], bestp[5], bestp[6]]
+            bestfit = expfit(timebase, *bestpe)
+            bestfitenv = bestfit
+            #bestp = [bestpe[0]]
+            c2r = c2re
+            r2 = r2e
+            chi2upper = chi2uppere
+            bestcov = bestcove
+            fitxt = 'exp fit'
+        else:
+            bestp = bestps
+            bestfit = sfit(timebase, *bestp)
+            penv = copy.deepcopy(bestp)
+            penv[1] = 0
+            bestfitenv = sfit(timebase, *penv)
+            chi2upper = chi2uppers
+            bestcov = bestcovs
+            c2r = c2rs
+            r2 = r2s
+            fitxt = 'sin fit'
 
-        except RuntimeError:
-            logging.warning('FITTING FAILED FOR {}'.format(name))
-            bestp = pguess
-            bestpc =fit.conf1d(bestp, np.zeros((len(bestp), len(bestp))))
-        bestfit = sfit(timebase, *bestp)
-        r2 = fit.nlcorr(sfit, timebase, signal_unf, bestp)
-        c2r = fit.redchi2(sfit, timebase, signal_unf, bestp, sigma=sigerr)
-        fit.error_analysis(timebase, signal_unf, bestfit, name=name)
+        warnings.resetwarnings()
+        #print('BEFORE', bestp)
+        #worstint = fit.conf_chi2(sfit, timebase, signal_unf, bestp, 2, sigma=sigerr)
+        #print('AFTER', bestp)
+        bestpc = fit.conf1d(bestp, bestcov, 2)
+        #bestint = [st[1] for st in bestpc]
+        #print('DELTA CONFIDENCE INTERVALS: ', np.subtract(bestint, worstint))
+
+        #bestfit = sfit(timebase, *bestp)
+        #c2r = fit.redchi2(sfit, timebase, signal_unf, bestp, sigma=sigerr)
+        #fit.error_analysis(timebase, signal_unf, bestfit, name=name)
         #if r2thresh < r2 <= 1.0:
         if chi2lower <= c2r <= chi2upper and r2thresh <= r2 <= 1.0:
             use_for_fit = True
@@ -136,8 +186,11 @@ def fit_data(analysis):
         fitres['frequency'] = np.abs(bestpc[1][0])
         fitres['frequency interval'] = bestpc[1][1]
         fitres['frequency sigma'] = bestpc[1][2]
-        fitres['damping']   = bestpc[2][0]
-        fitres['damping interval']   = bestpc[2][1]
+        fitres['frequency estimage'] = frequency_est
+        fitres['lambda estimate'] = damping_est
+        fitres['interference lambda'] = bestpc[4][0]
+        fitres['lambda'] = bestpc[2][0]
+        fitres['lambda interval'] = bestpc[2][1]
         fitres['amplitude'] = bestpc[0][0]
         fitres['amplitude interval'] = bestpc[0][1]
         fitres['interference amplitude'] = bestpc[3][0]
@@ -147,23 +200,34 @@ def fit_data(analysis):
         fitres['chi square'] = c2r
         fitres['best fit SNR'] = fit.snr(signal_unf, bestfit)
 
+        #justexp = fitres['amplitude'] * np.exp(-0.5*fitres['lambda']*timebase)
+        #justcos = np.cos(2*pi*fitres['frequency']*timebase + fitres['time delay'])
         # If this signal matches the goodness-of-fit criteria,
         # add it to the fit results dictionary
         if use_for_fit:
             r[name] = fitres
+        fitres['used in fit'] = use_for_fit
+        rall[name] = fitres
 
         print('    {:20s}'.format(name), end=' '*2)
-        for pk in bestp:
-            print('{:<9.4g}'.format(pk), end=' '*2)
+        for pk in ['amplitude', 'frequency', 'lambda', 'chi square']:
+            print('{:<9.4g}'.format(fitres[pk]), end=' '*2)
         print('')
 
+        tb1 = np.linspace(-1, 5, 1000)
+        bestfit1 = sfit(tb1, *bestp)
         plt.clf()
         fig = plt.figure()
         ax = fig.add_subplot(111)
         plt.plot(timebase, signal_unf, 'b.', label='data')
         plt.plot(timebase, signal, 'r--', label='smoothed data')
-        plt.plot(timebase, bestfit, 'g', label='fit')
-        paramstr1 = r'r$^2$ = ' + "{0:.3f}\n".format(r2)
+        plt.plot(timebase, bestfit, 'g', label=fitxt)
+
+        #plt.plot(timebase, justexp, 'r', label='just exp')
+        #plt.plot(timebase, justcos, 'k', label='just cos')
+        #plt.plot(timebase, env(bestfit), 'g--', label=fitxt + ' hilb')
+        #plt.plot(timebase, bestfite, 'g', label='exp fit')
+        paramstr1 = r'r$^2$ = ' + "{0:.3f}\n".format(r2) + fitxt + '\n'
         #paramstr1 = r''
         paramstr2 = r'$\chi^2_\nu$ = ' + "{0:3.3f}\n".format(c2r)
         paramstr3 = r'$F_p$ = {:.3g} $\pm$ {:.2g} GHz'.format(bestpc[1][0],bestpc[1][1])
@@ -177,20 +241,34 @@ def fit_data(analysis):
         plt.legend()
         plt.savefig(r'./sigfits/'+name+'.png')
         plt.clf()
-        plt.close()
+        plt.close(fig)
         del fig, ax
         #pb.update(1)
 
     # All of the fits are in r, so we'll add that to the analysis object
     analysis.set_fits(r)
+    analysis.set_rawfits(rall)
     return None
 
 
-def sfit(x, p0, p1, p2, p3, p4, p5, p6):
+def sfit(x, a, fp, ldamp, aint, intdamp, t0, v0, a0):
     x = np.array(x)
-    y =   (p0 * np.cos(2*pi*p1*(x-p5)) * np.exp(-(x-p5)*abs(p2))
-        + p3 * np.exp(-(x-p5)/abs(p4)) + p6)
+    y = (a * np.cos(2*pi*fp*x-t0) * np.exp(-0.5*ldamp*x)
+         #+ aint*x + v0)
+         + aint*np.exp(-0.5*intdamp*x) + a0*x + v0)
     return y
+
+def expfit(x, a, fp, ldamp, aint, intdamp, t0, v0, a0):
+    x = np.array(x)
+    y =   (a * np.exp(-0.5*ldamp*x)
+           + aint*x + v0)
+    return y
+
+
+def odfit(x, a, ldamp, t0, v0):
+    x = np.array(x)
+    y = a * np.exp(-0.5*abs(ldamp)*(x-t0)) + v0
+
 
 def msfit(x, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9):
     x = np.array(x)
@@ -204,5 +282,9 @@ def str_to_floats(s):
     s = re.sub('[\[\]\(\)\,]', ' ', s)
     return [float(elt) for elt in s.split()]
 
+
 def sos(x):
     return np.sum(np.multiply(x, x))
+
+def env(x):
+    return np.abs(scipy.signal.hilbert(x))

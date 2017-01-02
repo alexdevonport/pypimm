@@ -15,7 +15,7 @@ def load_data(a, fp):
         t, sigs, hs = load_data_csv(fp)
     else:
         raise Exception('Data file format not recognized. JSON or TXT.')
-    a.set_timebase(t)
+    a.set_timebase(np.array(t))
     a.set_raw_data(sigs)
     a.set_fields(hs)
 

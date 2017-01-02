@@ -20,6 +20,7 @@ def characterize_fits(analysis):
 
     # get relevant data from the analysis object
     fits = analysis.get_fits()
+    rawfits = analysis.get_rawfits()
     name = analysis.get_name()
     configs = analysis.get_configs()
 
@@ -31,12 +32,16 @@ def characterize_fits(analysis):
     # get an ordered list of all bias fields
     # TODO: remove the neeed for this by using ordered dicts
     key_pattern = re.compile('([+-]?\d+\.?\d*)(.*)')
+    rawhs = get_subkey(rawfits, 'bias field')
+    rawfs = get_subkey(rawfits, 'frequency estimate')
+    chis = get_subkey(rawfits, 'chi square')
+    phis = get_subkey(rawfits, 'time delay')
     hs = get_subkey(fits, 'bias field')
     amps, ampcs = get_subkey(fits, 'amplitude'), get_subkey(fits, 'amplitude interval')
     fs, fcs = get_subkey(fits, 'frequency'), get_subkey(fits, 'frequency interval')
     fsig = get_subkey(fits, 'frequency sigma')
-    ds, dcs = get_subkey(fits, 'damping'), get_subkey(fits, 'damping interval')
-
+    ds, dcs = get_subkey(fits, 'lambda'), get_subkey(fits, 'lambda interval')
+    intds = get_subkey(fits, 'interference damping')
     """
     for key in fits.keys():
         mo = key_pattern.match(key)
@@ -59,19 +64,22 @@ def characterize_fits(analysis):
     fs = np.abs(fs)
 
     # Prepare H and f data for calculating Ms and Hk
-    hkthresh = configs.getfloat('characterize', 'hk field fit thresh')
+    hkthreshl = configs.getfloat('characterize', 'hk field fit thresh lower')
+    hkthreshu = configs.getfloat('characterize', 'hk field fit thresh upper')
     hs_msfit = []
+    rawfs_msfit = []
     fs_msfit = []
     fsig_msfit = []
     fcs_msfit = []
     for h, f, s, c in zip(hs, fs, fsig, fcs):
-        if abs(h) >= hkthresh:
+        if abs(h) >= hkthreshl and abs(h) <= hkthreshu:
             hs_msfit.append(h)
             fs_msfit.append(f)
             fsig_msfit.append(s)
             fcs_msfit.append(c)
 
     hsi_msfit = 1000 / (4 * pi) * np.array(hs_msfit)  # H, in SI units (A/M)
+    rawomegas = 2*pi*np.array(rawfs_msfit)
     omegas = 2 * pi * np.array(fs_msfit)
     omega_sig = 2 * pi * np.array(fsig_msfit)
     omegacs = 0.5 * 2 * pi * np.array(fcs_msfit)
@@ -79,6 +87,7 @@ def characterize_fits(analysis):
     msguess = 800 * 1E3
     hcpguess = 1 * 1000 / (4 * pi)
     r['hs'] = hs
+
     fitbounds = ([0, 0, -10 * 1000/(4*pi)],
                  [2000*1E3, 75*1000/(4*pi), 10*1000/(4*pi)])
 
@@ -95,8 +104,12 @@ def characterize_fits(analysis):
             omega_sigz.append(sig)
             omegacz.append(c)
 
+    if configs.getboolean('characterize', 'use fft frequencies'):
+        omegafit = rawomegas
+    else:
+        omegafit = omegas
     bestp, bestcov = scipy.optimize.curve_fit(precession, hsi_msfit,
-                                              omegas, p0=[msguess, hkguess, hcpguess],
+                                              omegafit, p0=[msguess, hkguess, hcpguess],
                                               bounds=fitbounds, sigma=np.array(omega_sigz))
 
     c2r = fit.redchi2(precession, hsi_msfit, omegas,
@@ -159,14 +172,24 @@ def characterize_fits(analysis):
     # prepare damping vs field plot
     gmr = 28 * 2 * pi  # Gyromagnetic ratio, GHz/T
     mu0 = 4 * pi * 1E-7  # vacuum permeability (T-m/A)
-    ds = np.multiply(2, ds) * 1 / (gmr * mu0 * mscgs * 1E3)
-    dcs = np.multiply(2, dcs) * 1 / (gmr * mu0 * mscgs * 1E3)
+    ds = np.array(ds) / (gmr * mu0 * mscgs * 1E3)
+    intds = np.array(intds) / (gmr * mu0 * mscgs * 1E3)
+    dcs = np.array(dcs) / (gmr * mu0 * mscgs * 1E3)
+    #print('DS',ds)
+    #print('DCS',dcs)
     r['average damping'] = np.mean(ds)
     r['Damping'] = ds
+    r['interference damping'] = intds
+
+    #hsf, dsf = fillholes(rawhs, hs, ds, fillval=-100.0)
+    #r['filled fields'] = hsf
+    #r['filled damping'] = dsf
 
     deb = np.multiply(0.5, dcs)
+    r['Damping confidence radius'] = deb
+
     plt.plot(hs, ds, 'bs-')
-    #plt.errorbar(hs, ds, yerr= deb)
+    plt.errorbar(hs, ds, yerr= deb)
     plt.xlabel('bias field (Oe)')
     plt.ylabel('damping')
     plt.title('Damping\n' + name[:10] + '...')
@@ -174,11 +197,27 @@ def characterize_fits(analysis):
     plt.clf()
 
     # prepare amplitude vs field plot
-    plt.plot(hs, amps, 'bo ')
+    plt.plot(hs, np.abs(amps), 'bo ')
     plt.xlabel('bias field (Oe)')
     plt.ylabel('amplitude (mV)')
     plt.title('sinusoidal fit amplitude\n' + name[:10] + '...')
     plt.savefig(os.path.join('.', name + '-ampl.png'))
+    plt.clf()
+
+    # prepare amplitude vs field plot
+    plt.plot(rawhs, phis, 'bo ')
+    plt.xlabel('bias field (Oe)')
+    plt.ylabel('phase offset (rads)')
+    plt.title('phase offset\n' + name[:10] + '...')
+    plt.savefig(os.path.join('.', name + '-phase.png'))
+    plt.clf()
+
+    # prepare amplitude vs field plot
+    plt.plot(rawhs, chis, 'bo ')
+    plt.xlabel('bias field (Oe)')
+    plt.ylabel('reduced chi square (dim\'less)')
+    plt.title('reduced chi square\n' + name[:10] + '...')
+    plt.savefig(os.path.join('.', name + '-chisq.png'))
     plt.clf()
 
     # Now that that's all done, add the results to the analysis object
@@ -215,6 +254,18 @@ def get_subkey(d, subkey):
         except (TypeError, KeyError):
             pass
     return r
+
+def fillholes(a, *b, fillval=-1):
+    filleds = []
+    for bs in b:
+        for k, ak in enumerate(a):
+            #print(bs)
+            print('size of a:{:d}, size of bs:{:d}, k:{:d}'.format(np.size(a), np.size(bs), k))
+            if bs[k] != a[k]:
+                bs = np.insert(bs, k, fillval)
+        filleds.append(bs)
+    return tuple(filleds)
+
 
 def replinf(x, repl):
     """

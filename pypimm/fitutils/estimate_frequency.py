@@ -52,20 +52,19 @@ def estimate_frequency(timebase, signal, resolution=0.01, name=None):
     maxf = fs / npts * maxind
 
     pguess = [1, 1, 1, 1, 1]
-    """
-    popt, pcov = scipy.optimize.curve_fit(spectmodel, flist, pspect, pguess)
-    bestfit = spectmodel(flist, *popt)
+
+    #popt, pcov = scipy.optimize.curve_fit(spectmodel, flist, pspect, pguess)
+    #bestfit = spectmodel(flist, *popt)
 
     plt.clf()
     #plt.plot(flist[:nyq] , pspect[:nyq])
     plt.plot(flist, pspect, label='data')
-    plt.plot(flist, bestfit, label='fit')
+    #plt.plot(flist, bestfit, label='fit')
     plt.xlabel('Frequency (GHz)')
     plt.ylabel('PSD (V$^2$ / GHz)')
     plt.title(name + ' Spectrum')
     fp = os.path.join('.','spectra', name + 'spectrum.png')
     plt.savefig(fp)
-    """
 
     #print('FREQUENCY ESTIMATE: {}'.format(maxf))
     # return frequency bin corresponding to the max index

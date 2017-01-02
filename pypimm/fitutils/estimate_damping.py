@@ -1,6 +1,8 @@
 __author__ = 'alex'
 from scipy.optimize import curve_fit
+from math import pi
 import scipy.stats
+import scipy.signal
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -21,9 +23,15 @@ def estimate_damping(timebase, signal, fguess, name=None):
     # part. We can construct the analytic signal using a discrete Hilbert
     # transform.
     fs = 1 / (timebase[1] - timebase[0])
-    nfit = int(fs)
+    tfit = 0.75
+    nfit = int(tfit*fs)
     env = abs(hilbert(signal))
-    lenv = np.log(env)
+    #lenv = np.log(env)
+    #lsig = np.log(np.abs(signal))
+    lsin = np.log(np.abs(np.cos(2*pi*fguess*timebase)))
+    #lsig = np.log(np.abs(signal))
+    signal = signal - np.mean(signal[:-10])
+    lsig = (envelope(signal))
     #env=signal
     #env = bandlimit(env, fs, 2.5E9)
 
@@ -34,20 +42,35 @@ def estimate_damping(timebase, signal, fguess, name=None):
     # g is the damping we're after. We can now approximate the
     # damping using a least-squares fit.
     try:
-        slope, intercept, r_value, p_value, std_err = scipy.stats.linregress(timebase[:nfit],lenv[:nfit])
-        #popt, pcov = curve_fit(expdamp, timebase[30:int(len(timebase)/2)], env[30:int(len(timebase)/2)], p0=[-0.2, 1.0, 0.0])
-        bestfit = timebase * slope + intercept
+        #slope, intercept, r_value, p_value, std_err = scipy.stats.linregress(timebase[:nfit],lsig[:nfit])
+        popt, pcov = curve_fit(expdamp, timebase[30:int(len(timebase)/2)], signal[30:int(len(timebase)/2)])
+        damping_estimate1 = popt[0]
+        damping_estimate2 = popt[1]
+        bestfit = expdamp(timebase, *popt)
         #bestfit = expdamp(timebase, popt[0], popt[1], popt[2])
-        damping_estimate = slope
+        #damping_estimate = -2 * slope
     except:
-        bestfit = expdamp(timebase, -0.2, 1.0, 0.0)
-        damping_estimate = 0.2
+        bestfit = expdamp(timebase, 4, 4, 1, 1, 0)
+        damping_estimate1 = 4
+        damping_estimate2 = 4
 
     env = env / env[0]
     plt.clf()
-    plt.plot(timebase, lenv, timebase, bestfit)
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    plt.plot(timebase, lsig, timebase, bestfit)
+    #plt.plot(timebase, lsin)
+    paramstr1 = 'lambda estimate 1: {:.4g}\n'.format(damping_estimate1)
+    paramstr2 = 'lambda estimate 2: {:.4g}'.format(damping_estimate2)
+    plt.text(0.75, 0.25, paramstr1 + paramstr2,
+             horizontalalignment='center',
+             verticalalignment='center',
+             transform=ax.transAxes)
     plt.savefig(r'./envelopes/'+name+'_env.png')
-    return damping_estimate
+    plt.clf()
+    plt.close(fig)
+    del fig, ax
+    return 0.5*(damping_estimate1 + damping_estimate2)
 
 
 def hilbert(x):
@@ -59,6 +82,19 @@ def hilbert(x):
     xh = np.fft.ifft(xfft)
     return xh
 
+def envelope(x):
+    return np.abs(scipy.signal.hilbert(x))
 
-def expdamp(x, p0, p1, p2):
-    return p1 * np.exp(p0 * x) + p2
+def expdamp(x, ldamp1, ldamp2, a1, a2, v0):
+    return (a1 * np.exp(-0.5*ldamp1 * x)
+          + a2 * np.exp(-0.5*ldamp2 * x) + v0)
+
+def pseudoenvelope(x, window=3):
+    xr = np.zeros(np.size(x))
+    for k, xk in enumerate(x):
+        try:
+            xr[k] = np.max(x[k-window:k+window])
+        except IndexError as e:
+            print(e)
+            xr[k] = xk
+    return xr

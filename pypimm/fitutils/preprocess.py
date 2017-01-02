@@ -42,14 +42,10 @@ def preprocess(timebase, signal, configs, name=''):
     raw = signal
     #signal = bandlimit(signal, fs, bw)
     try:
-        #signal = scipy.signal.wiener(signal)
-        #signal = bandlimit(signal, fs, bw)
-        #signal = scipy.signal.wiener(signal)
-        signal = fit.optimal_filter(signal, fs, nullsig, [10, 1, 1], noise, [1, 1, 1], name=name)
+        #signal = fit.optimal_filter(signal, fs, nullsig, [10, 1, 1], noise, [1, 1, 1], name=name)
+        signal = scipy.signal.savgol_filter(signal, 15, 4)
     except RuntimeError:
         signal = bandlimit(signal, fs, bw)
-    #signal = scipy.signal.savgol_filter(signal, 7, 2)
-    #signal = sm.nonparametric.lowess(signal, timebase, frac=0.02)[:,1]
 
     # skip some data. set data[0] to be the first maximum after the skip, so that the
     # signal of interest resembles a damped cosine. Chose damped cosine over damped sine
@@ -66,7 +62,9 @@ def preprocess(timebase, signal, configs, name=''):
     nzero = math.ceil(tzero / ts)
 
     nskip = math.ceil(tskip / ts)
-    nskip1 = math.ceil(tskip1 / ts)
+    #nskip = 0
+    #nskip1 = math.ceil(tskip1 / ts)
+    nskip1 = 0
     ntrunc = min(math.ceil(ttrunc / ts), len(signal))  # we don't want the chosen length to be longer than the signal!
     signal = signal[nskip:]
     unf = unf[nskip:]
@@ -77,7 +75,10 @@ def preprocess(timebase, signal, configs, name=''):
         pk = globalmax(np.abs(signal))
     else:
         pk = localmax(np.abs(signal))
-    totalskip = pk + nskip1
+    tpeak = pk *ts
+    #totalskip = pk
+    #totalskip = pk + nskip1
+    totalskip = 0 # No skipping. MADNESSS
     signal = signal[totalskip:]
     unf = unf[totalskip:]
     timebase = timebase[totalskip:] - timebase[totalskip]
@@ -95,7 +96,7 @@ def preprocess(timebase, signal, configs, name=''):
     dcsu = np.mean(unf[-nzero:])
     unf -= dcsu
 
-    return (timebase, signal, tunf, unf, raw)
+    return (timebase, signal, tunf, unf, raw, tpeak)
 
 
 

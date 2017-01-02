@@ -2,26 +2,32 @@
 use legacy data = yes  # default is JSON data format
 
 [preprocess]
-initial data skip = 0.0 # nanoseconds of data to skip before finding peak
-skip after max = 0.0
+initial data skip = 1.9 # nanoseconds of data to skip before finding peak
+skip after max = 0.15
 data fit length = 5     # nanoseconds of data to use for fit
-bandlimit = 2.5           # bandwidth of Gaussian preprocess filter (GHz)
-use global max = yes     # Start fit at highest overall peak after skip, or the nearest one?
-zero mean length = 1.0
+bandlimit = 4           # bandwidth of Gaussian preprocess filter (GHz)
+use global max = no     
+zero mean length = 0.0
 
 [fit-params]
-stdev measurement length = 2 # nanoseconds of data to use to calculate signal noise
+fit smooth = yes  # smooth data before trying to fit?
+# nanoseconds of data to use to calculate signal noise
+stdev measurement length = 0.5 
 max SNR = 5.0
 
-reduced chi squared lower thresh = 0.4  # Signal fits with reduced chi^2 below this value aren't used
-reduced chi squared upper thresh = 3   # Signal fits with reduced chi^2 above this value aren't used
+# Signal fits with reduced chi^2 below this value aren't used
+reduced chi squared lower thresh = 0.5
+# Signal fits with reduced chi^2 above this value aren't used
+reduced chi squared upper thresh = 10
+reduced chi squared upper thresh for expfit = 100
 
 signal fit r squared threshold = 0.1  # to fit ms and hk
 
 # parameter list is as follows:
-# fmr ampl, fmr frequency, fmr damping, interference ampl, interference damping, time delay
 use shotgun-lsq = yes
-shotgun-lsq spreads = 10.0, 0.1, 1, 0.4, 2, 0.3, 0.1
+shotgun-lsq spreads = 10.0, 0.1, 1, 0.4, 2, 0.3, 0.1, 0.1
 
 [characterize]
-hk field fit thresh = 0
+use fft frequencies = no
+hk field fit thresh lower = 5
+hk field fit thresh upper = 75

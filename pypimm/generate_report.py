@@ -17,7 +17,7 @@ def generate_report(analysis, templatedir):
     # Get relevant data from the analysis object
     name = analysis.get_name()
     data = analysis.get_raw_data()
-    fits = analysis.get_fits()
+    fits = analysis.get_rawfits()
     properties = analysis.get_results()
 
     # This is just to get a sense of what pandas output looks like
