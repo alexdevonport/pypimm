@@ -83,14 +83,15 @@ def characterize_fits(analysis):
     omegas = 2 * pi * np.array(fs_msfit)
     omega_sig = 2 * pi * np.array(fsig_msfit)
     omegacs = 0.5 * 2 * pi * np.array(fcs_msfit)
-    hkguess = 10 * 1000 / (4 * pi)
-    msguess = 800 * 1E3
-    hcpguess = 1 * 1000 / (4 * pi)
+    hkguess = 3 * 1000 / (4 * pi)
+    msguess = 100 * 1E3
+    hcpguess = 0 * 1000 / (4 * pi)
     r['hs'] = hs
 
-    fitbounds = ([0, 0, -10 * 1000/(4*pi)],
-                 [2000*1E3, 75*1000/(4*pi), 10*1000/(4*pi)])
-
+    fitbounds = ([0, -75.00001 * 1000/(4*pi), -75.00001 * 1000/(4*pi)],
+                 [2000*1E3, 75*1000/(4*pi), 0.00001*1000/(4*pi)])
+    fitbounds_basin=list(zip(fitbounds[0],fitbounds[1]))
+    print(fitbounds_basin)
     omega_sigz = []
     omegacz = []
     sigavg = np.median(omega_sig)
@@ -108,14 +109,29 @@ def characterize_fits(analysis):
         omegafit = rawomegas
     else:
         omegafit = omegas
+    #prebestp, c2 = fit.basin_lsq(precession, hsi_msfit, omegafit,
+    #    [msguess, hkguess, hcpguess], niter=1000, 
+    #    bounds=fitbounds_basin)
+    print('-'*40)
+    print('omega_sigz:')
+    print(omega_sigz)
+    print('-'*40)
     bestp, bestcov = scipy.optimize.curve_fit(precession, hsi_msfit,
-                                              omegafit, p0=[msguess, hkguess, hcpguess],
-                                              bounds=fitbounds, sigma=np.array(omega_sigz))
+        omegafit, p0=[msguess,hkguess,hcpguess], bounds=fitbounds, 
+        #sigma=np.array(omega_sigz), 
+        sigma=2*pi*0.03+np.array(omega_sigz), 
+        absolute_sigma=True)
+
 
     c2r = fit.redchi2(precession, hsi_msfit, omegas,
-                      bestp, sigma=omega_sig)
+        bestp,
+        #sigma=omega_sig,
+        sigma=2*pi*0.03 + np.array(omega_sigz))
+        
 
-    bestpc = fit.conf1d(bestp, bestcov, stdevs=2)
+    #bestpc = fit.conf1d(bestp, bestcov, stdevs=2)
+    bestpc = fit.conf_chi2(precession, hsi_msfit, omegas,
+        bestp, nstd=2, sigma=omega_sig)
     msconfint = 2 * bestpc[0][1] / 1000
     hkconfint = 2 * bestpc[1][1] * 4 * pi / 1000
     hcconfint = 2 * bestpc[2][1] * 4 * pi / 1000
@@ -142,7 +158,8 @@ def characterize_fits(analysis):
     plt.plot(hs_msfit, omegas/ (2*pi), 'bo ', label='data')
 
     # TODO: get error bars working. Holy cow, they do not want to work.
-    plt.errorbar(hs_msfit, omegas/(2*pi), yerr=np.divide(omegacz, 2*pi), fmt='o')
+    plt.errorbar(hs_msfit, omegas/(2*pi), 
+        yerr=np.divide(omegacz, 2*pi), fmt='o')
     plt.plot(hs_bestfit, omega_bestfit/(2*pi), label='fit')
     plt.legend()
     plt.xlabel('bias field (Oe)')
@@ -175,8 +192,6 @@ def characterize_fits(analysis):
     ds = np.array(ds) / (gmr * mu0 * mscgs * 1E3)
     intds = np.array(intds) / (gmr * mu0 * mscgs * 1E3)
     dcs = np.array(dcs) / (gmr * mu0 * mscgs * 1E3)
-    #print('DS',ds)
-    #print('DCS',dcs)
     r['average damping'] = np.mean(ds)
     r['Damping'] = ds
     r['interference damping'] = intds
@@ -239,8 +254,8 @@ def precession2(h, ms, hk, hcp):
     mu0 = 4 * pi * 1E-7  # vacuum  (T-m/A)
     gamma = 2 * pi * 28 # GHz / T
     heff = np.abs(h + hcp)
-    fp = gamma * mu0 * np.sqrt((heff + hk)*(heff + hk + ms))
-    return fp
+    omega = gamma * mu0 * np.sqrt((heff + hk)*(heff + hk + ms))
+    return omega
 
 
 def sos(x):
@@ -260,7 +275,6 @@ def fillholes(a, *b, fillval=-1):
     for bs in b:
         for k, ak in enumerate(a):
             #print(bs)
-            print('size of a:{:d}, size of bs:{:d}, k:{:d}'.format(np.size(a), np.size(bs), k))
             if bs[k] != a[k]:
                 bs = np.insert(bs, k, fillval)
         filleds.append(bs)

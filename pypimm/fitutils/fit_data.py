@@ -13,9 +13,13 @@ import warnings
 import collections
 from ProgBar import ProgBar
 import fitutils as fit
+import pandas as pd
 
 rcParams.update({'figure.autolayout': True})
-plt.style.use(['seaborn-paper'])
+
+# Seaborn-paper currently cannot be imported for some reason,
+# Mon Feb 20 10:57:25 MST 2017
+#plt.style.use(['seaborn-paper'])
 
 
 def fit_data(analysis):
@@ -113,8 +117,6 @@ def fit_data(analysis):
                 sigma=sigerr)
             r2s = fit.nlcorr(sfit, timebase, signal_unf, bestps)
         except RuntimeError as e:
-            print('FAILED S FIT:')
-            #print(e)
             c2rs = np.inf
             r2 = -np.inf
             r2s = -np.inf
@@ -133,8 +135,6 @@ def fit_data(analysis):
             #bestcove = np.ones((len(pguess), len(pguess)))
             bestfite = expfit(timebase, *bestpe)
         except RuntimeError as e:
-            print('FAILED EXP FIT:')
-            #print(e)
             r2 = -np.inf
             r2e = -np.inf
             bestpe = [1, 1, 1, 1, 1, 1, 1]
@@ -166,11 +166,11 @@ def fit_data(analysis):
 
         warnings.resetwarnings()
         #print('BEFORE', bestp)
-        #worstint = fit.conf_chi2(sfit, timebase, signal_unf, bestp, 2, sigma=sigerr)
+        #bestpc = fit.conf_chi2(sfit, timebase, signal_unf, 
+        #    bestp, 2, sigma=sigerr)
         #print('AFTER', bestp)
         bestpc = fit.conf1d(bestp, bestcov, 2)
         #bestint = [st[1] for st in bestpc]
-        #print('DELTA CONFIDENCE INTERVALS: ', np.subtract(bestint, worstint))
 
         #bestfit = sfit(timebase, *bestp)
         #c2r = fit.redchi2(sfit, timebase, signal_unf, bestp, sigma=sigerr)
@@ -179,7 +179,8 @@ def fit_data(analysis):
         if chi2lower <= c2r <= chi2upper and r2thresh <= r2 <= 1.0:
             use_for_fit = True
         else:
-            logging.warning('Not using ' + name + ' in final analysis. chi^2: '+ str(c2r))
+            logging.warning('Not using ' 
+                + name + ' in final analysis. chi^2: '+ str(c2r))
             use_for_fit = False
 
         # give names to fit parameters, for convenience in excel spreadsheet
@@ -213,7 +214,13 @@ def fit_data(analysis):
         for pk in ['amplitude', 'frequency', 'lambda', 'chi square']:
             print('{:<9.4g}'.format(fitres[pk]), end=' '*2)
         print('')
-
+        
+        # prepare data and fit for export
+        #df = pd.DataFrame({'timebase':timebase,'data':signal_unf,
+        #    'fit':bestfit})
+        #dfname = 'wfms-{:s}.csv'.format(name)
+        #df.to_csv(dfname)
+        
         tb1 = np.linspace(-1, 5, 1000)
         bestfit1 = sfit(tb1, *bestp)
         plt.clf()

@@ -2,7 +2,7 @@
 use legacy data = yes  # default is JSON data format
 
 [preprocess]
-initial data skip = 1.9 # nanoseconds of data to skip before finding peak
+initial data skip = 2.1 # nanoseconds of data to skip before finding peak
 skip after max = 0.15
 data fit length = 5     # nanoseconds of data to use for fit
 bandlimit = 4           # bandwidth of Gaussian preprocess filter (GHz)
@@ -16,18 +16,17 @@ stdev measurement length = 0.5
 max SNR = 5.0
 
 # Signal fits with reduced chi^2 below this value aren't used
-reduced chi squared lower thresh = 0.5
+reduced chi squared lower thresh = 0.2
 # Signal fits with reduced chi^2 above this value aren't used
-reduced chi squared upper thresh = 10
+reduced chi squared upper thresh = 100
 reduced chi squared upper thresh for expfit = 100
 
 signal fit r squared threshold = 0.1  # to fit ms and hk
 
-# parameter list is as follows:
 use shotgun-lsq = yes
 shotgun-lsq spreads = 10.0, 0.1, 1, 0.4, 2, 0.3, 0.1, 0.1
 
 [characterize]
 use fft frequencies = no
-hk field fit thresh lower = 5
+hk field fit thresh lower = 10
 hk field fit thresh upper = 75
